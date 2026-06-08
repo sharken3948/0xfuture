@@ -139,7 +139,7 @@ export function AstrologyModule() {
                 {result.symbol}
               </div>
               <div>
-                <p className="text-xl font-bold text-[#c4a25a]">{result.zodiacSign}</p>
+                <p className="text-xl font-bold text-[#c4a25a]">{t.astrology.zodiacSigns[result.zodiacSign] ?? result.zodiacSign}</p>
                 <p className="text-xs text-[#a78bfa]/60">{t.astrology.birthSign}</p>
               </div>
             </div>
@@ -151,7 +151,7 @@ export function AstrologyModule() {
             </p>
           </ReadingCard>
 
-          <ShareButton text={t.astrology.shareText(result.zodiacSign)} />
+          <ShareButton text={t.astrology.shareText(t.astrology.zodiacSigns[result.zodiacSign] ?? result.zodiacSign)} />
         </div>
       )}
     </div>

@@ -74,6 +74,7 @@ export interface T {
     resultTitle: string;
     firstTx: string;
     birthSign: string;
+    zodiacSigns: Record<string, string>;
     shareText: (sign: string) => string;
   };
   tarot: {
@@ -125,6 +126,7 @@ export const TRANSLATIONS: Record<LangCode, T> = {
       resultTitle: 'Your Onchain Zodiac',
       firstTx: 'First TX:',
       birthSign: 'Onchain Birth Sign',
+      zodiacSigns: { Aries: 'Aries', Taurus: 'Taurus', Gemini: 'Gemini', Cancer: 'Cancer', Leo: 'Leo', Virgo: 'Virgo', Libra: 'Libra', Scorpio: 'Scorpio', Sagittarius: 'Sagittarius', Capricorn: 'Capricorn', Aquarius: 'Aquarius', Pisces: 'Pisces' },
       shareText: (sign) => `My onchain birth sign is ${sign} ✦ Discover yours at 0xfuture.xyz #0xFUTURE #Base`,
     },
     tarot: {
@@ -174,6 +176,7 @@ export const TRANSLATIONS: Record<LangCode, T> = {
       resultTitle: 'Onchain Zodyakınız',
       firstTx: 'İlk İşlem:',
       birthSign: 'Onchain Doğum Burcu',
+      zodiacSigns: { Aries: 'Koç', Taurus: 'Boğa', Gemini: 'İkizler', Cancer: 'Yengeç', Leo: 'Aslan', Virgo: 'Başak', Libra: 'Terazi', Scorpio: 'Akrep', Sagittarius: 'Yay', Capricorn: 'Oğlak', Aquarius: 'Kova', Pisces: 'Balık' },
       shareText: (sign) => `Onchain doğum burcum ${sign} ✦ Seninkini keşfet 0xfuture.xyz #0xFUTURE #Base`,
     },
     tarot: {
@@ -223,6 +226,7 @@ export const TRANSLATIONS: Record<LangCode, T> = {
       resultTitle: 'Tu Zodiaco Onchain',
       firstTx: 'Primera TX:',
       birthSign: 'Signo de Nacimiento Onchain',
+      zodiacSigns: { Aries: 'Aries', Taurus: 'Tauro', Gemini: 'Géminis', Cancer: 'Cáncer', Leo: 'Leo', Virgo: 'Virgo', Libra: 'Libra', Scorpio: 'Escorpio', Sagittarius: 'Sagitario', Capricorn: 'Capricornio', Aquarius: 'Acuario', Pisces: 'Piscis' },
       shareText: (sign) => `Mi signo de nacimiento onchain es ${sign} ✦ Descubre el tuyo en 0xfuture.xyz #0xFUTURE #Base`,
     },
     tarot: {
@@ -272,6 +276,7 @@ export const TRANSLATIONS: Record<LangCode, T> = {
       resultTitle: 'Seu Zodíaco Onchain',
       firstTx: 'Primeira TX:',
       birthSign: 'Signo de Nascimento Onchain',
+      zodiacSigns: { Aries: 'Áries', Taurus: 'Touro', Gemini: 'Gêmeos', Cancer: 'Câncer', Leo: 'Leão', Virgo: 'Virgem', Libra: 'Libra', Scorpio: 'Escorpião', Sagittarius: 'Sagitário', Capricorn: 'Capricórnio', Aquarius: 'Aquário', Pisces: 'Peixes' },
       shareText: (sign) => `Meu signo de nascimento onchain é ${sign} ✦ Descubra o seu em 0xfuture.xyz #0xFUTURE #Base`,
     },
     tarot: {
@@ -321,6 +326,7 @@ export const TRANSLATIONS: Record<LangCode, T> = {
       resultTitle: 'Votre Zodiaque Onchain',
       firstTx: 'Première TX:',
       birthSign: 'Signe de Naissance Onchain',
+      zodiacSigns: { Aries: 'Bélier', Taurus: 'Taureau', Gemini: 'Gémeaux', Cancer: 'Cancer', Leo: 'Lion', Virgo: 'Vierge', Libra: 'Balance', Scorpio: 'Scorpion', Sagittarius: 'Sagittaire', Capricorn: 'Capricorne', Aquarius: 'Verseau', Pisces: 'Poissons' },
       shareText: (sign) => `Mon signe de naissance onchain est ${sign} ✦ Découvrez le vôtre sur 0xfuture.xyz #0xFUTURE #Base`,
     },
     tarot: {
@@ -370,6 +376,7 @@ export const TRANSLATIONS: Record<LangCode, T> = {
       resultTitle: 'Dein Onchain-Tierkreis',
       firstTx: 'Erste TX:',
       birthSign: 'Onchain-Geburtszeichen',
+      zodiacSigns: { Aries: 'Widder', Taurus: 'Stier', Gemini: 'Zwillinge', Cancer: 'Krebs', Leo: 'Löwe', Virgo: 'Jungfrau', Libra: 'Waage', Scorpio: 'Skorpion', Sagittarius: 'Schütze', Capricorn: 'Steinbock', Aquarius: 'Wassermann', Pisces: 'Fische' },
       shareText: (sign) => `Mein Onchain-Geburtszeichen ist ${sign} ✦ Entdecke deines auf 0xfuture.xyz #0xFUTURE #Base`,
     },
     tarot: {
@@ -419,6 +426,7 @@ export const TRANSLATIONS: Record<LangCode, T> = {
       resultTitle: 'Ваш Ончейн Зодиак',
       firstTx: 'Первая TX:',
       birthSign: 'Ончейн Знак Рождения',
+      zodiacSigns: { Aries: 'Овен', Taurus: 'Телец', Gemini: 'Близнецы', Cancer: 'Рак', Leo: 'Лев', Virgo: 'Дева', Libra: 'Весы', Scorpio: 'Скорпион', Sagittarius: 'Стрелец', Capricorn: 'Козерог', Aquarius: 'Водолей', Pisces: 'Рыбы' },
       shareText: (sign) => `Мой ончейн знак рождения ${sign} ✦ Узнайте свой на 0xfuture.xyz #0xFUTURE #Base`,
     },
     tarot: {
@@ -468,6 +476,7 @@ export const TRANSLATIONS: Record<LangCode, T> = {
       resultTitle: '你的链上星座',
       firstTx: '首次交易：',
       birthSign: '链上出生星座',
+      zodiacSigns: { Aries: '白羊座', Taurus: '金牛座', Gemini: '双子座', Cancer: '巨蟹座', Leo: '狮子座', Virgo: '处女座', Libra: '天秤座', Scorpio: '天蝎座', Sagittarius: '射手座', Capricorn: '摩羯座', Aquarius: '水瓶座', Pisces: '双鱼座' },
       shareText: (sign) => `我的链上出生星座是 ${sign} ✦ 在 0xfuture.xyz 发现你的 #0xFUTURE #Base`,
     },
     tarot: {
@@ -517,6 +526,7 @@ export const TRANSLATIONS: Record<LangCode, T> = {
       resultTitle: 'आपकी ऑनचेन राशि',
       firstTx: 'पहला TX:',
       birthSign: 'ऑनचेन जन्म राशि',
+      zodiacSigns: { Aries: 'मेष', Taurus: 'वृषभ', Gemini: 'मिथुन', Cancer: 'कर्क', Leo: 'सिंह', Virgo: 'कन्या', Libra: 'तुला', Scorpio: 'वृश्चिक', Sagittarius: 'धनु', Capricorn: 'मकर', Aquarius: 'कुम्भ', Pisces: 'मीन' },
       shareText: (sign) => `मेरी ऑनचेन जन्म राशि ${sign} है ✦ अपनी खोजें 0xfuture.xyz पर #0xFUTURE #Base`,
     },
     tarot: {
@@ -566,6 +576,7 @@ export const TRANSLATIONS: Record<LangCode, T> = {
       resultTitle: 'آپ کا آن چین زودیاک',
       firstTx: 'پہلا TX:',
       birthSign: 'آن چین پیدائشی نشان',
+      zodiacSigns: { Aries: 'حمل', Taurus: 'ثور', Gemini: 'جوزا', Cancer: 'سرطان', Leo: 'اسد', Virgo: 'سنبلہ', Libra: 'میزان', Scorpio: 'عقرب', Sagittarius: 'قوس', Capricorn: 'جدی', Aquarius: 'دلو', Pisces: 'حوت' },
       shareText: (sign) => `میری آن چین پیدائشی علامت ${sign} ہے ✦ اپنی دریافت کریں 0xfuture.xyz پر #0xFUTURE #Base`,
     },
     tarot: {
@@ -615,6 +626,7 @@ export const TRANSLATIONS: Record<LangCode, T> = {
       resultTitle: 'Zodiac Onchain Rẹ',
       firstTx: 'TX Àkọ́kọ́:',
       birthSign: 'Àmì Ìbí Onchain',
+      zodiacSigns: { Aries: 'Àgùntàn', Taurus: 'Màlúù', Gemini: 'Ìbejì', Cancer: 'Àkàn', Leo: 'Kìnnìún', Virgo: 'Wúnndíá', Libra: 'Ìwọ̀n', Scorpio: 'Àkékè', Sagittarius: 'Ọlọ́dẹ', Capricorn: 'Ewúrẹ́', Aquarius: 'Olùgbébomi', Pisces: 'Ẹja' },
       shareText: (sign) => `Àmì ìbí onchain mi jẹ́ ${sign} ✦ Ṣàwárí tirẹ ni 0xfuture.xyz #0xFUTURE #Base`,
     },
     tarot: {
@@ -629,3 +641,18 @@ export const TRANSLATIONS: Record<LangCode, T> = {
   },
 
 };
+
+// Verify completeness at module load
+(function verifyTranslations() {
+  const ZODIAC_KEYS = ['Aries','Taurus','Gemini','Cancer','Leo','Virgo','Libra','Scorpio','Sagittarius','Capricorn','Aquarius','Pisces'] as const;
+  const ASTRO_LABELS = ['resultTitle','firstTx','birthSign'] as const;
+  for (const lang of Object.keys(TRANSLATIONS) as LangCode[]) {
+    const a = TRANSLATIONS[lang].astrology;
+    for (const label of ASTRO_LABELS) {
+      if (!a[label]) console.warn(`[i18n] Missing astrology.${label} for ${lang}`);
+    }
+    for (const sign of ZODIAC_KEYS) {
+      if (!a.zodiacSigns?.[sign]) console.warn(`[i18n] Missing zodiacSigns.${sign} for ${lang}`);
+    }
+  }
+})();
