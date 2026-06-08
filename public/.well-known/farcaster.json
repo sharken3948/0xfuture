@@ -7,11 +7,11 @@
   "frame": {
     "version": "1",
     "name": "0xFUTURE",
-    "iconUrl": "https://0xfuture.xyz/icon.png",
-    "homeUrl": "https://0xfuture.xyz",
-    "imageUrl": "https://0xfuture.xyz/og.png",
+    "iconUrl": "https://www.0xfuture.xyz/icon.png",
+    "homeUrl": "https://www.0xfuture.xyz",
+    "imageUrl": "https://www.0xfuture.xyz/og.png",
     "buttonTitle": "Read My Future",
-    "splashImageUrl": "https://0xfuture.xyz/splash.png",
+    "splashImageUrl": "https://www.0xfuture.xyz/splash.png",
     "splashBackgroundColor": "#06040f"
   }
 }
