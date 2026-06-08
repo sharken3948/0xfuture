@@ -1,0 +1,153 @@
+@import "tailwindcss";
+
+:root {
+  --background: #06040f;
+  --foreground: #e2d9f3;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+body {
+  background: radial-gradient(ellipse at 50% 0%, #1a0933 0%, #0a0614 40%, #06040f 100%) fixed;
+  color: var(--foreground);
+  font-family: var(--font-geist-sans, Arial, sans-serif);
+  overscroll-behavior: none;
+}
+
+
+/* ==================== Header shimmer ==================== */
+
+@keyframes shimmer {
+  0%   { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+.header-shimmer {
+  background: linear-gradient(
+    90deg,
+    #a78bfa 0%,
+    #c4a25a 20%,
+    #e2d9f3 44%,
+    #fff8ee 50%,
+    #e2d9f3 56%,
+    #c4a25a 78%,
+    #a78bfa 100%
+  );
+  background-size: 250% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: shimmer 4s linear infinite;
+}
+
+/* ==================== Mystic action button pulse ==================== */
+
+@keyframes btn-pulse {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(196,162,90,0), 0 4px 14px rgba(196,162,90,0.1);
+  }
+  50% {
+    box-shadow: 0 0 18px 4px rgba(196,162,90,0.22), 0 4px 20px rgba(196,162,90,0.28);
+  }
+}
+
+.mystic-btn {
+  background: rgba(6, 4, 15, 0.9);
+  border: 1px solid #c4a25a;
+  animation: btn-pulse 2.5s ease-in-out infinite;
+}
+
+.mystic-btn:hover {
+  box-shadow: 0 0 22px rgba(196,162,90,0.4), 0 0 8px rgba(196,162,90,0.25);
+}
+
+/* ==================== Reading card scroll glow ==================== */
+
+@keyframes scroll-glow {
+  0%, 100% {
+    box-shadow:
+      0 0  8px rgba(196,162,90,0.08),
+      0 0  0 1px rgba(196,162,90,0.06),
+      inset 0 0 10px rgba(196,162,90,0.03);
+  }
+  50% {
+    box-shadow:
+      0 0 24px rgba(196,162,90,0.28),
+      0 0  0 1px rgba(196,162,90,0.25),
+      inset 0 0 18px rgba(196,162,90,0.07);
+  }
+}
+
+.reading-card {
+  animation: scroll-glow 3.5s ease-in-out infinite;
+}
+
+/* ==================== Active tab glow ==================== */
+
+@keyframes tab-glow {
+  0%, 100% {
+    box-shadow: 0 0  6px rgba(196,162,90,0.18),
+                inset 0 0  8px rgba(196,162,90,0.05);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(196,162,90,0.45),
+                inset 0 0 16px rgba(196,162,90,0.12);
+  }
+}
+
+.tab-active {
+  animation: tab-glow 2.2s ease-in-out infinite;
+}
+
+/* ==================== Tarot card 3D flip ==================== */
+
+.tarot-card {
+  perspective: 700px;
+}
+
+.tarot-card-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  transition: transform 0.65s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.tarot-card-inner.flipped {
+  transform: rotateY(180deg);
+}
+
+.tarot-card-face {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  border-radius: 0.75rem;
+  overflow: hidden;
+}
+
+.tarot-card-front {
+  transform: rotateY(180deg);
+}
+
+/* ==================== Tab animated content ==================== */
+
+@keyframes card-fade {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.tab-card-fade {
+  animation: card-fade 0.5s ease-out forwards;
+}
+
+/* ==================== Scrollbar ==================== */
+
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(196,162,90,0.35); border-radius: 2px; }

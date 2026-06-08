@@ -1,0 +1,17 @@
+{
+  "accountAssociation": {
+    "header": "eyJmaWQiOjQ2Nzk2MCwidHlwZSI6ImN1c3RvZHkiLCJrZXkiOiIweDI4MDQ3NjgwQzlBNjlFNTMwNjhkMWFlMjZjM0UyMzg3ZUI5RDAzNDQifQ",
+    "payload": "eyJkb21haW4iOiJ3d3cuMHhmdXR1cmUueHl6In0",
+    "signature": "RJ6jGgvIoUeFv3suLSbrGLV0CvWWz/cIhPe4Drr9i/NIkx++4vwTlbmcy7xEN/7D/eSn/l1XknMYqEwoNgz9Chs="
+  },
+  "frame": {
+    "version": "1",
+    "name": "0xFUTURE",
+    "iconUrl": "https://0xfuture.xyz/icon.png",
+    "homeUrl": "https://0xfuture.xyz",
+    "imageUrl": "https://0xfuture.xyz/og.png",
+    "buttonTitle": "Read My Future",
+    "splashImageUrl": "https://0xfuture.xyz/splash.png",
+    "splashBackgroundColor": "#06040f"
+  }
+}
