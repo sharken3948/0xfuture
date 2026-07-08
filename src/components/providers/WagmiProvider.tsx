@@ -9,6 +9,12 @@ import { useMemo, useState } from 'react';
 
 const WC_PROJECT_ID = process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID ?? '';
 
+const soneiumWithIcon = {
+  ...soneium,
+  iconUrl: '/soneium.png',
+  iconBackground: '#000',
+};
+
 export function WagmiProvider({ children }: { children: React.ReactNode }) {
   const [queryClient] = useState(() => new QueryClient());
 
@@ -17,7 +23,7 @@ export function WagmiProvider({ children }: { children: React.ReactNode }) {
       getDefaultConfig({
         appName: '0xFUTURE',
         projectId: WC_PROJECT_ID,
-        chains: [base, soneium],
+        chains: [base, soneiumWithIcon],
         ssr: true,
       }),
     [],
