@@ -9,6 +9,8 @@ export interface ChainConfig {
   usdcAddress: `0x${string}`;
   usdcSymbol: string;
   explorerApi: string;
+  iconUrl: string;
+  iconBackground: string;
 }
 
 // Soneium: Circle has not deployed native USDC. Address below is
@@ -21,6 +23,8 @@ export const CHAIN_CONFIGS: Record<ChainKey, ChainConfig> = {
     usdcAddress: '0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913',
     usdcSymbol: 'USDC',
     explorerApi: 'https://api.basescan.org/api',
+    iconUrl: '/base.png',
+    iconBackground: '#0052FF',
   },
   soneium: {
     key: 'soneium',
@@ -29,6 +33,8 @@ export const CHAIN_CONFIGS: Record<ChainKey, ChainConfig> = {
     usdcAddress: '0xbA9986D2381edf1DA03B0B9c1f8b00dc4AacC369',
     usdcSymbol: 'USDC.e',
     explorerApi: 'https://soneium.blockscout.com/api',
+    iconUrl: '/soneium.png',
+    iconBackground: '#000',
   },
 };
 
