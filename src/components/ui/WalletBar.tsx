@@ -92,9 +92,11 @@ export function WalletBar() {
                       aria-disabled
                       className="w-full flex items-center gap-2 px-2 py-1.5 rounded-lg text-[11px] text-violet-400/40 select-none cursor-not-allowed"
                     >
-                      <span className="w-4 h-4 rounded-full bg-black/40 border border-emerald-400/30 flex items-center justify-center">
-                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-400/60" />
-                      </span>
+                      <img
+                        src="/arc.png"
+                        alt=""
+                        className="w-4 h-4 rounded-full grayscale opacity-50"
+                      />
                       <span className="flex-1 text-left">Arc Mainnet</span>
                       <span className="text-[9px] tracking-widest uppercase text-emerald-400/60">
                         soon
