@@ -152,9 +152,9 @@ export function TarotModule() {
               </span>
             </div>
           )}
-          <div className="grid grid-cols-3 gap-2">
+          <div className="grid grid-cols-3 gap-2 lg:gap-4">
             {result.cards.map((card, i) => (
-              <div key={i} className="tarot-card h-48">
+              <div key={i} className="tarot-card h-48 lg:h-auto lg:aspect-[300/527]">
                 <div className={`tarot-card-inner${flippedCount > i ? ' flipped' : ''}`}>
 
                   {/* Back face — shown first */}
@@ -181,17 +181,17 @@ export function TarotModule() {
                     <img
                       src={TAROT_IMAGES[card.name]}
                       alt={card.name}
-                      className={`w-full h-full object-cover object-top${card.reversed ? ' rotate-180' : ''}`}
+                      className={`w-full h-full object-cover object-top lg:object-contain${card.reversed ? ' rotate-180' : ''}`}
                     />
-                    <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/95 via-black/70 to-transparent px-1.5 pt-5 pb-1.5">
-                      <p className="text-[9px] font-bold uppercase tracking-widest text-white/50 leading-none">
+                    <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/95 via-black/70 to-transparent px-1.5 pt-5 pb-1.5 lg:px-3 lg:pt-8 lg:pb-3">
+                      <p className="text-[9px] lg:text-[13px] font-bold uppercase tracking-widest text-white/50 leading-none">
                         {t.tarot.positions[i]}
                       </p>
-                      <p className="text-[10px] font-medium text-white/90 leading-tight mt-0.5">
+                      <p className="text-[10px] lg:text-[15px] font-medium text-white/90 leading-tight mt-0.5 lg:mt-1">
                         {card.name}
                       </p>
                       {card.reversed && (
-                        <p className="text-[8px] text-red-400/80 leading-none mt-0.5">{t.common.reversed}</p>
+                        <p className="text-[8px] lg:text-[11px] text-red-400/80 leading-none mt-0.5 lg:mt-1">{t.common.reversed}</p>
                       )}
                     </div>
                   </div>
