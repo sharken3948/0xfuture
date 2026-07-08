@@ -92,7 +92,7 @@ export default function Home() {
         <p className="text-[10px] text-violet-600/40 text-center">
           {t.common.entertainment}
         </p>
-        {!isFarcasterContext && (
+        {!isFarcasterContext && process.env.NODE_ENV !== 'production' && (
           <button
             onClick={() => setShowDevPanel((v) => !v)}
             className="block mx-auto text-xs text-gray-500 hover:text-gray-300 transition-colors"

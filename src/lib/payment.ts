@@ -10,7 +10,11 @@ const USDC_ABI = parseAbi([
   'function decimals() view returns (uint8)',
 ]);
 
-export const isDevMode = process.env.NEXT_PUBLIC_APP_URL?.includes('localhost') ?? false;
+// NODE_ENV is inlined at build time by Next.js, so the entire dev-mode
+// branch is dead-code-eliminated in production bundles.
+export const isDevMode =
+  process.env.NODE_ENV !== 'production' &&
+  (process.env.NEXT_PUBLIC_APP_URL?.includes('localhost') ?? false);
 
 const WHITELIST = new Set(['0xf58dc3d979271325f52349142afec83b4b1c4e3a']);
 
