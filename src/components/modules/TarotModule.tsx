@@ -59,6 +59,10 @@ export function TarotModule() {
     let txHash: string;
     if (isWhitelisted(addr)) {
       txHash = '0xWHITELIST';
+    } else if (isDevMode) {
+      setState('paying');
+      await new Promise((r) => setTimeout(r, 800));
+      txHash = '0xDEV_SIMULATED';
     } else {
       setState('paying');
       try {

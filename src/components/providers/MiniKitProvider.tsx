@@ -2,7 +2,8 @@
 
 import { useEffect, useState, createContext, useContext, useCallback, useMemo } from 'react';
 import { sdk } from '@farcaster/miniapp-sdk';
-import { useAccount, useWalletClient, useSwitchChain } from 'wagmi';
+import { useAccount, useChainId, useConfig, useSwitchChain } from 'wagmi';
+import { getWalletClient as getWagmiWalletClient } from '@wagmi/core';
 import { createWalletClient, custom, type WalletClient } from 'viem';
 import { CHAIN_CONFIGS, DEFAULT_CHAIN_KEY } from '@/lib/constants';
 import type { ChainKey } from '@/types';
@@ -37,19 +38,24 @@ export function useMiniKit() {
   return useContext(MiniKitContext);
 }
 
+function chainIdToKey(chainId: number | undefined): ChainKey {
+  if (chainId === CHAIN_CONFIGS.soneium.chain.id) return 'soneium';
+  return 'base';
+}
+
 export function MiniKitProvider({ children }: { children: React.ReactNode }) {
   const [isMounted, setIsMounted] = useState(false);
   const [isReady, setIsReady] = useState(false);
   const [isFarcasterContext, setIsFarcasterContext] = useState(false);
   const [fcAddress, setFcAddress] = useState<string | null>(null);
   const [manualAddress, setManualAddress] = useState<string | null>(null);
-  const [chainKeyState, setChainKeyState] = useState<ChainKey>(DEFAULT_CHAIN_KEY);
 
+  const config = useConfig();
+  const currentChainId = useChainId();
   const { address: wagmiAddress } = useAccount();
-  const selectedChainKey: ChainKey = isFarcasterContext ? 'base' : chainKeyState;
-  const chainCfg = CHAIN_CONFIGS[selectedChainKey];
-  const { data: wagmiWalletClient } = useWalletClient({ chainId: chainCfg.chain.id });
   const { switchChainAsync } = useSwitchChain();
+
+  const selectedChainKey: ChainKey = isFarcasterContext ? 'base' : chainIdToKey(currentChainId);
 
   useEffect(() => {
     setIsMounted(true);
@@ -95,7 +101,7 @@ export function MiniKitProvider({ children }: { children: React.ReactNode }) {
         return null;
       }
     }
-    // Browser: connection is initiated by the ConnectButton UI (wagmi).
+    // Browser: connection is initiated by the RainbowKit ConnectButton.
     return (wagmiAddress as string | undefined) ?? null;
   }, [isFarcasterContext, wagmiAddress]);
 
@@ -103,9 +109,14 @@ export function MiniKitProvider({ children }: { children: React.ReactNode }) {
     (key: ChainKey) => {
       // Inside Base App / Farcaster, chain is locked to Base.
       if (isFarcasterContext) return;
-      setChainKeyState(key);
+      const target = CHAIN_CONFIGS[key].chain.id;
+      if (currentChainId !== target) {
+        switchChainAsync({ chainId: target }).catch(() => {
+          // user rejection or unsupported — leave chain as-is
+        });
+      }
     },
-    [isFarcasterContext],
+    [isFarcasterContext, currentChainId, switchChainAsync],
   );
 
   const getWalletClient = useCallback(async (): Promise<WalletClient> => {
@@ -115,14 +126,14 @@ export function MiniKitProvider({ children }: { children: React.ReactNode }) {
         transport: custom(sdk.wallet.ethProvider),
       });
     }
-    if (!wagmiWalletClient) {
-      throw new Error('Wallet not connected');
+    const targetChainId = CHAIN_CONFIGS[selectedChainKey].chain.id;
+    if (currentChainId !== targetChainId) {
+      await switchChainAsync({ chainId: targetChainId });
     }
-    if (wagmiWalletClient.chain?.id !== chainCfg.chain.id) {
-      await switchChainAsync({ chainId: chainCfg.chain.id });
-    }
-    return wagmiWalletClient;
-  }, [isFarcasterContext, wagmiWalletClient, chainCfg.chain.id, switchChainAsync]);
+    const wc = await getWagmiWalletClient(config, { chainId: targetChainId });
+    if (!wc) throw new Error('Wallet not connected');
+    return wc;
+  }, [isFarcasterContext, selectedChainKey, currentChainId, switchChainAsync, config]);
 
   const value = useMemo<MiniKitContextValue>(
     () => ({

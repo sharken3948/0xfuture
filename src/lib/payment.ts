@@ -24,11 +24,6 @@ export async function sendUSDC(
   walletClient: WalletClient,
   usdCents: number,
 ): Promise<PaymentResult> {
-  if (isDevMode) {
-    await new Promise((r) => setTimeout(r, 800));
-    return { txHash: '0xDEV_SIMULATED', success: true };
-  }
-
   const cfg = CHAIN_CONFIGS[chainKey];
   const publicClient = createPublicClient({ chain: cfg.chain, transport: http() });
 
