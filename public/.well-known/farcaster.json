@@ -12,6 +12,20 @@
     "imageUrl": "https://www.0xfuture.xyz/og.png",
     "buttonTitle": "Read My Future",
     "splashImageUrl": "https://www.0xfuture.xyz/splash.png",
-    "splashBackgroundColor": "#06040f"
+    "splashBackgroundColor": "#06040f",
+    "subtitle": "Onchain Oracle",
+    "description": "Free crypto fortune telling powered by your wallet. Numerology, astrology and tarot readings on Base.",
+    "primaryCategory": "entertainment",
+    "tags": ["crypto", "fortune", "tarot", "base", "onchain"],
+    "tagline": "The blockchain knows your fate",
+    "ogTitle": "0xFUTURE — Onchain Oracle",
+    "ogDescription": "Free crypto fortune telling powered by your wallet.",
+    "ogImageUrl": "https://www.0xfuture.xyz/og.png",
+    "heroImageUrl": "https://www.0xfuture.xyz/og.png",
+    "screenshotUrls": [
+      "https://www.0xfuture.xyz/0.jpeg",
+      "https://www.0xfuture.xyz/1.jpeg",
+      "https://www.0xfuture.xyz/2.jpeg"
+    ]
   }
 }
