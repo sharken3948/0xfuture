@@ -89,6 +89,15 @@ export default function Home() {
           </div>
         )}
 
+        {!isFarcasterContext && (
+          <div className="flex justify-center">
+            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border border-violet-900/40 bg-black/30 text-[10px] tracking-wide text-violet-400/60 select-none">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400/60" />
+              Arc Mainnet · soon
+            </span>
+          </div>
+        )}
+
         <p className="text-[10px] text-violet-600/40 text-center">
           {t.common.entertainment}
         </p>
