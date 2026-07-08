@@ -1,12 +1,49 @@
-import type { TarotCard, ZodiacSign } from '@/types';
+import type { Chain } from 'viem';
+import { base, soneium } from 'viem/chains';
+import type { ChainKey, TarotCard, ZodiacSign } from '@/types';
 
-export const USDC_ADDRESS_BASE = '0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913' as const;
-export const BASE_CHAIN_ID = 8453;
+export interface ChainConfig {
+  key: ChainKey;
+  label: string;
+  chain: Chain;
+  usdcAddress: `0x${string}`;
+  usdcSymbol: string;
+  explorerApi: string;
+}
 
-export const READING_PRICES = {
-  numerology: 0n,
-  astrology: 100_000n,  // $0.10 USDC (6 decimals)
-  tarot: 500_000n,      // $0.50 USDC (6 decimals)
+// Soneium: Circle has not deployed native USDC. Address below is
+// bridged USDC.e per Soneium's official contract list.
+export const CHAIN_CONFIGS: Record<ChainKey, ChainConfig> = {
+  base: {
+    key: 'base',
+    label: 'Base',
+    chain: base,
+    usdcAddress: '0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913',
+    usdcSymbol: 'USDC',
+    explorerApi: 'https://api.basescan.org/api',
+  },
+  soneium: {
+    key: 'soneium',
+    label: 'Soneium',
+    chain: soneium,
+    usdcAddress: '0xbA9986D2381edf1DA03B0B9c1f8b00dc4AacC369',
+    usdcSymbol: 'USDC.e',
+    explorerApi: 'https://soneium.blockscout.com/api',
+  },
+};
+
+export const CHAIN_KEYS: ChainKey[] = ['base', 'soneium'];
+export const DEFAULT_CHAIN_KEY: ChainKey = 'base';
+
+export function isChainKey(v: unknown): v is ChainKey {
+  return v === 'base' || v === 'soneium';
+}
+
+// Prices in USD cents; runtime scales by token decimals().
+export const READING_PRICES_CENTS = {
+  numerology: 0,
+  astrology: 10,   // $0.10
+  tarot: 50,       // $0.50
 } as const;
 
 export const ZODIAC_SIGNS: { sign: ZodiacSign; from: [number, number]; to: [number, number] }[] = [

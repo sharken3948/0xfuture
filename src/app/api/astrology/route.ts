@@ -1,12 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getFirstTransactionDate, dateToZodiac } from '@/lib/astrology';
 import { generateReading } from '@/lib/groq';
-import { ZODIAC_SYMBOLS } from '@/lib/constants';
+import { DEFAULT_CHAIN_KEY, ZODIAC_SYMBOLS, isChainKey } from '@/lib/constants';
 import { GROQ_LANG_NAMES, type LangCode } from '@/lib/translations';
 
 export async function POST(req: NextRequest) {
   try {
-    const { address, txHash, language } = await req.json();
+    const { address, txHash, language, chainKey } = await req.json();
     const langName = GROQ_LANG_NAMES[(language as LangCode) ?? 'EN'] ?? 'English';
     if (!address || !/^0x[0-9a-fA-F]{40}$/.test(address)) {
       return NextResponse.json({ error: 'Invalid address' }, { status: 400 });
@@ -17,7 +17,8 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Payment required' }, { status: 402 });
     }
 
-    const firstTxDate = await getFirstTransactionDate(address);
+    const chain = isChainKey(chainKey) ? chainKey : DEFAULT_CHAIN_KEY;
+    const firstTxDate = await getFirstTransactionDate(address, chain);
     const zodiacSign = dateToZodiac(firstTxDate);
     const symbol = ZODIAC_SYMBOLS[zodiacSign];
     const shortAddr = `${address.slice(0, 6)}...${address.slice(-4)}`;

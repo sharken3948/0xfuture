@@ -1,14 +1,13 @@
 'use client';
 
-import { sdk } from '@farcaster/miniapp-sdk';
-import { createWalletClient, createPublicClient, custom, http, parseAbi } from 'viem';
-import { base } from 'viem/chains';
-import { USDC_ADDRESS_BASE, BASE_CHAIN_ID } from './constants';
-import type { PaymentResult } from '@/types';
+import { createPublicClient, http, parseAbi, type WalletClient } from 'viem';
+import { CHAIN_CONFIGS } from './constants';
+import type { ChainKey, PaymentResult } from '@/types';
 
 const USDC_ABI = parseAbi([
   'function transfer(address to, uint256 amount) returns (bool)',
   'function balanceOf(address owner) view returns (uint256)',
+  'function decimals() view returns (uint8)',
 ]);
 
 export const isDevMode = process.env.NEXT_PUBLIC_APP_URL?.includes('localhost') ?? false;
@@ -20,60 +19,56 @@ export function isWhitelisted(address: string): boolean {
 }
 
 export async function sendUSDC(
-  toAddress: string,
-  amountMicro: bigint
+  toAddress: `0x${string}`,
+  chainKey: ChainKey,
+  walletClient: WalletClient,
+  usdCents: number,
 ): Promise<PaymentResult> {
   if (isDevMode) {
-    await new Promise((r) => setTimeout(r, 800)); // simulate network delay
+    await new Promise((r) => setTimeout(r, 800));
     return { txHash: '0xDEV_SIMULATED', success: true };
   }
 
-  const provider = sdk.wallet.ethProvider;
+  const cfg = CHAIN_CONFIGS[chainKey];
+  const publicClient = createPublicClient({ chain: cfg.chain, transport: http() });
 
-  const walletClient = createWalletClient({
-    chain: base,
-    transport: custom(provider),
+  // Ensure wallet is on the selected chain
+  const currentChainId = await walletClient.getChainId();
+  if (currentChainId !== cfg.chain.id) {
+    await walletClient.switchChain({ id: cfg.chain.id });
+  }
+
+  const decimals = await publicClient.readContract({
+    address: cfg.usdcAddress,
+    abi: USDC_ABI,
+    functionName: 'decimals',
   });
+  const amount = (BigInt(usdCents) * 10n ** BigInt(decimals)) / 100n;
 
-  const publicClient = createPublicClient({
-    chain: base,
-    transport: http(),
-  });
+  const [account] = await walletClient.getAddresses();
+  if (!account) throw new Error('No account available');
 
-  const [account] = await walletClient.requestAddresses();
-
-  // Check balance first
   const balance = await publicClient.readContract({
-    address: USDC_ADDRESS_BASE,
+    address: cfg.usdcAddress,
     abi: USDC_ABI,
     functionName: 'balanceOf',
     args: [account],
   });
-
-  if (balance < amountMicro) {
-    throw new Error(`Insufficient USDC balance. Need ${Number(amountMicro) / 1e6} USDC.`);
-  }
-
-  // Switch chain to Base if needed
-  try {
-    await provider.request({
-      method: 'wallet_switchEthereumChain',
-      params: [{ chainId: `0x${BASE_CHAIN_ID.toString(16)}` }],
-    });
-  } catch {
-    // ignore if already on Base or chain switching not supported
+  if (balance < amount) {
+    throw new Error(
+      `Insufficient ${cfg.usdcSymbol} on ${cfg.label}. Need $${(usdCents / 100).toFixed(2)}.`,
+    );
   }
 
   const txHash = await walletClient.writeContract({
-    address: USDC_ADDRESS_BASE,
+    address: cfg.usdcAddress,
     abi: USDC_ABI,
     functionName: 'transfer',
-    args: [toAddress as `0x${string}`, amountMicro],
+    args: [toAddress, amount],
     account,
+    chain: cfg.chain,
   });
 
-  // Wait for 1 confirmation
   await publicClient.waitForTransactionReceipt({ hash: txHash, confirmations: 1 });
-
   return { txHash, success: true };
 }

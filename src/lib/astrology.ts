@@ -1,5 +1,5 @@
-import type { ZodiacSign } from '@/types';
-import { ZODIAC_SIGNS } from './constants';
+import type { ChainKey, ZodiacSign } from '@/types';
+import { CHAIN_CONFIGS, ZODIAC_SIGNS } from './constants';
 
 export function dateToZodiac(date: Date): ZodiacSign {
   const month = date.getMonth() + 1;
@@ -28,9 +28,12 @@ export function dateToZodiac(date: Date): ZodiacSign {
   return 'Capricorn';
 }
 
-export async function getFirstTransactionDate(address: string): Promise<Date> {
-  const apiKey = process.env.BASESCAN_API_KEY;
-  const url = new URL('https://api.basescan.org/api');
+export async function getFirstTransactionDate(
+  address: string,
+  chainKey: ChainKey,
+): Promise<Date> {
+  const cfg = CHAIN_CONFIGS[chainKey];
+  const url = new URL(cfg.explorerApi);
   url.searchParams.set('module', 'account');
   url.searchParams.set('action', 'txlist');
   url.searchParams.set('address', address);
@@ -39,7 +42,12 @@ export async function getFirstTransactionDate(address: string): Promise<Date> {
   url.searchParams.set('page', '1');
   url.searchParams.set('offset', '1');
   url.searchParams.set('sort', 'asc');
-  if (apiKey) url.searchParams.set('apikey', apiKey);
+
+  // Basescan requires an API key; Soneium Blockscout does not.
+  if (chainKey === 'base') {
+    const apiKey = process.env.BASESCAN_API_KEY;
+    if (apiKey) url.searchParams.set('apikey', apiKey);
+  }
 
   const res = await fetch(url.toString(), { next: { revalidate: 3600 } });
   const data = await res.json();

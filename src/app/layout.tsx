@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { Geist } from 'next/font/google';
 import './globals.css';
 import { MiniKitProvider } from '@/components/providers/MiniKitProvider';
+import { WagmiProvider } from '@/components/providers/WagmiProvider';
 import { LanguageProvider } from '@/lib/language-context';
 import { StarField } from '@/components/ui/StarField';
 
@@ -50,7 +51,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className="min-h-full flex flex-col">
         <StarField />
         <LanguageProvider>
-          <MiniKitProvider>{children}</MiniKitProvider>
+          <WagmiProvider>
+            <MiniKitProvider>{children}</MiniKitProvider>
+          </WagmiProvider>
         </LanguageProvider>
       </body>
     </html>

@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useMiniKit } from '@/components/providers/MiniKitProvider';
 import { sendUSDC, isDevMode, isWhitelisted } from '@/lib/payment';
-import { READING_PRICES, TAROT_IMAGES } from '@/lib/constants';
+import { READING_PRICES_CENTS, TAROT_IMAGES } from '@/lib/constants';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 import { ReadingCard } from '@/components/ui/ReadingCard';
 import { ExpandableInfo } from '@/components/ui/ExpandableInfo';
@@ -17,7 +17,7 @@ interface TarotResult {
 }
 
 export function TarotModule() {
-  const { walletAddress, connect } = useMiniKit();
+  const { walletAddress, connect, selectedChainKey, getWalletClient } = useMiniKit();
   const { language } = useLanguage();
   const t = useTranslations();
   const [state, setState] = useState<ReadingState>('idle');
@@ -62,7 +62,13 @@ export function TarotModule() {
     } else {
       setState('paying');
       try {
-        const payment = await sendUSDC(treasury, READING_PRICES.tarot);
+        const walletClient = await getWalletClient();
+        const payment = await sendUSDC(
+          treasury as `0x${string}`,
+          selectedChainKey,
+          walletClient,
+          READING_PRICES_CENTS.tarot,
+        );
         txHash = payment.txHash;
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Payment failed');

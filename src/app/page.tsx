@@ -6,6 +6,7 @@ import { NumerologyModule } from '@/components/modules/NumerologyModule';
 import { AstrologyModule } from '@/components/modules/AstrologyModule';
 import { TarotModule } from '@/components/modules/TarotModule';
 import { WalletInput } from '@/components/ui/WalletInput';
+import { WalletBar } from '@/components/ui/WalletBar';
 import { LanguageSelector } from '@/components/ui/LanguageSelector';
 import { MidnightCountdown } from '@/components/ui/MidnightCountdown';
 import { useMiniKit } from '@/components/providers/MiniKitProvider';
@@ -61,6 +62,9 @@ export default function Home() {
 
       {/* Footer */}
       <div className="mt-6 space-y-3">
+        {/* Browser wallet + chain selector — only outside Farcaster */}
+        {!isFarcasterContext && <WalletBar />}
+
         {/* Dev panel — only outside Farcaster */}
         {!isFarcasterContext && showDevPanel && (
           <div className="rounded-xl border border-violet-900/40 bg-black/30 p-3 space-y-2.5">

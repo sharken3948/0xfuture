@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useMiniKit } from '@/components/providers/MiniKitProvider';
 import { sendUSDC, isDevMode, isWhitelisted } from '@/lib/payment';
-import { READING_PRICES } from '@/lib/constants';
+import { READING_PRICES_CENTS } from '@/lib/constants';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 import { ReadingCard } from '@/components/ui/ReadingCard';
 import { ExpandableInfo } from '@/components/ui/ExpandableInfo';
@@ -19,7 +19,7 @@ interface AstrologyResult {
 }
 
 export function AstrologyModule() {
-  const { walletAddress, connect } = useMiniKit();
+  const { walletAddress, connect, selectedChainKey, getWalletClient } = useMiniKit();
   const { language } = useLanguage();
   const t = useTranslations();
   const [state, setState] = useState<ReadingState>('idle');
@@ -50,7 +50,13 @@ export function AstrologyModule() {
     } else {
       setState('paying');
       try {
-        const payment = await sendUSDC(treasury, READING_PRICES.astrology);
+        const walletClient = await getWalletClient();
+        const payment = await sendUSDC(
+          treasury as `0x${string}`,
+          selectedChainKey,
+          walletClient,
+          READING_PRICES_CENTS.astrology,
+        );
         txHash = payment.txHash;
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Payment failed');
@@ -65,7 +71,7 @@ export function AstrologyModule() {
       const res = await fetch('/api/astrology', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ address: addr, txHash, language }),
+        body: JSON.stringify({ address: addr, txHash, language, chainKey: selectedChainKey }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error);
