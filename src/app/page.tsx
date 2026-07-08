@@ -35,10 +35,16 @@ export default function Home() {
           className="mx-auto object-contain"
           style={{ maxHeight: '180px' }}
         />
-        {walletAddress && (
-          <p className="text-[10px] text-violet-500/50 mt-1 font-mono">
-            {walletAddress.slice(0, 6)}&hellip;{walletAddress.slice(-4)}
-          </p>
+        {isFarcasterContext ? (
+          walletAddress && (
+            <p className="text-[10px] text-violet-500/50 mt-1 font-mono">
+              {walletAddress.slice(0, 6)}&hellip;{walletAddress.slice(-4)}
+            </p>
+          )
+        ) : (
+          <div className="mt-2">
+            <WalletBar />
+          </div>
         )}
       </div>
 
@@ -62,9 +68,6 @@ export default function Home() {
 
       {/* Footer */}
       <div className="mt-6 space-y-3">
-        {/* Browser wallet + chain selector — only outside Farcaster */}
-        {!isFarcasterContext && <WalletBar />}
-
         {/* Dev panel — only outside Farcaster */}
         {!isFarcasterContext && showDevPanel && (
           <div className="rounded-xl border border-violet-900/40 bg-black/30 p-3 space-y-2.5">

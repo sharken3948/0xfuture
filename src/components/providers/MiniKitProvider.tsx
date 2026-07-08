@@ -3,6 +3,7 @@
 import { useEffect, useState, createContext, useContext, useCallback, useMemo } from 'react';
 import { sdk } from '@farcaster/miniapp-sdk';
 import { useAccount, useChainId, useConfig, useSwitchChain } from 'wagmi';
+import { useConnectModal } from '@rainbow-me/rainbowkit';
 import { getWalletClient as getWagmiWalletClient } from '@wagmi/core';
 import { createWalletClient, custom, type WalletClient } from 'viem';
 import { CHAIN_CONFIGS, DEFAULT_CHAIN_KEY } from '@/lib/constants';
@@ -54,6 +55,7 @@ export function MiniKitProvider({ children }: { children: React.ReactNode }) {
   const currentChainId = useChainId();
   const { address: wagmiAddress } = useAccount();
   const { switchChainAsync } = useSwitchChain();
+  const { openConnectModal } = useConnectModal();
 
   const selectedChainKey: ChainKey = isFarcasterContext ? 'base' : chainIdToKey(currentChainId);
 
@@ -101,9 +103,12 @@ export function MiniKitProvider({ children }: { children: React.ReactNode }) {
         return null;
       }
     }
-    // Browser: connection is initiated by the RainbowKit ConnectButton.
+    // Browser: pop the RainbowKit modal. The promise resolves right away;
+    // wagmi's useAccount subscription will surface the address into
+    // walletAddress once the user picks a wallet.
+    if (!wagmiAddress) openConnectModal?.();
     return (wagmiAddress as string | undefined) ?? null;
-  }, [isFarcasterContext, wagmiAddress]);
+  }, [isFarcasterContext, wagmiAddress, openConnectModal]);
 
   const setSelectedChainKey = useCallback(
     (key: ChainKey) => {
@@ -153,6 +158,7 @@ export function MiniKitProvider({ children }: { children: React.ReactNode }) {
       isFarcasterContext,
       walletAddress,
       connect,
+      setManualAddress,
       selectedChainKey,
       setSelectedChainKey,
       getWalletClient,

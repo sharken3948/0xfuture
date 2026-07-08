@@ -33,10 +33,7 @@ export function AstrologyModule() {
     if (!addr) {
       addr = await connect();
     }
-    if (!addr) {
-      setError('Connect your wallet to continue.');
-      return;
-    }
+    if (!addr) return;
     if (!treasury) {
       setError('Treasury address not configured.');
       return;

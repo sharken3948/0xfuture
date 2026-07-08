@@ -29,10 +29,7 @@ export function NumerologyModule() {
     if (!addr) {
       addr = await connect();
     }
-    if (!addr) {
-      setError('Connect your wallet to get a reading.');
-      return;
-    }
+    if (!addr) return;
 
     setState('loading');
     setError(null);
