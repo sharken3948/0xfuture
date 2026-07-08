@@ -20,29 +20,30 @@ export default function Home() {
   const t = useTranslations();
 
   return (
-    <main className="relative z-10 flex flex-col min-h-screen max-w-sm mx-auto px-4 py-5">
+    <main className="relative z-10 flex flex-col min-h-screen max-w-sm mx-auto px-4 py-5 lg:max-w-3xl lg:px-8 lg:py-8">
       {/* Header */}
-      <div className="relative text-center mb-5">
-        <div className="absolute left-0 top-0">
-          <MidnightCountdown />
+      <div className="relative text-center mb-5 lg:mb-8">
+        <div className="lg:flex lg:items-center lg:justify-between lg:gap-6">
+          <div className="absolute left-0 top-0 lg:static">
+            <MidnightCountdown />
+          </div>
+          <img
+            src="/logo.png"
+            alt="0xFUTURE"
+            className="mx-auto object-contain max-h-[180px] lg:mx-0 lg:max-h-[240px]"
+          />
+          <div className="absolute right-0 top-0 lg:static">
+            <LanguageSelector />
+          </div>
         </div>
-        <div className="absolute right-0 top-0">
-          <LanguageSelector />
-        </div>
-        <img
-          src="/logo.png"
-          alt="0xFUTURE"
-          className="mx-auto object-contain"
-          style={{ maxHeight: '180px' }}
-        />
         {isFarcasterContext ? (
           walletAddress && (
-            <p className="text-[10px] text-violet-500/50 mt-1 font-mono">
+            <p className="text-[10px] text-violet-500/50 mt-1 lg:mt-4 font-mono">
               {walletAddress.slice(0, 6)}&hellip;{walletAddress.slice(-4)}
             </p>
           )
         ) : (
-          <div className="mt-2">
+          <div className="mt-2 lg:mt-4">
             <WalletBar />
           </div>
         )}
@@ -52,7 +53,7 @@ export default function Home() {
       <TabBar active={activeModule} onChange={setActiveModule} />
 
       {/* Module content */}
-      <div className="flex-1 mt-4">
+      <div className="flex-1 mt-4 lg:mt-6 lg:self-center lg:w-full lg:max-w-2xl">
         {!isReady ? (
           <div className="flex items-center justify-center h-32">
             <div className="w-6 h-6 rounded-full border-2 border-violet-500/30 border-t-violet-400 animate-spin" />

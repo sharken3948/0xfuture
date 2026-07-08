@@ -202,7 +202,7 @@ export function TarotModule() {
           </div>
 
           <ReadingCard title={t.common.oracleReading}>
-            <p className="text-sm text-[#e2d9f3]/85 leading-relaxed whitespace-pre-wrap">
+            <p className="text-sm lg:text-base text-[#e2d9f3]/85 leading-relaxed whitespace-pre-wrap">
               {result.interpretation}
             </p>
           </ReadingCard>

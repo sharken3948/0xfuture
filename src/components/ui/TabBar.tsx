@@ -43,11 +43,11 @@ const ASTRO_GLYPHS = [
 /* ── Shared label pinned at bottom of each tab ── */
 function TabLabel({ name, price, free }: { name: string; price?: string; free?: boolean }) {
   return (
-    <div className="flex flex-col items-center gap-0.5 pb-3">
-      <span className="text-[10px] text-[#a78bfa]/70 tracking-wide" style={{ fontFamily: 'Georgia, serif' }}>
+    <div className="flex flex-col items-center gap-0.5 pb-3 lg:pb-5 lg:gap-1">
+      <span className="text-[10px] lg:text-[13px] text-[#a78bfa]/70 tracking-wide" style={{ fontFamily: 'Georgia, serif' }}>
         {name}
       </span>
-      <span className="text-[13px] font-semibold text-[#c4a25a]/65">{free ? 'FREE' : price}</span>
+      <span className="text-[13px] lg:text-[15px] font-semibold text-[#c4a25a]/65">{free ? 'FREE' : price}</span>
     </div>
   );
 }
@@ -255,10 +255,10 @@ export function TabBar({ active, onChange }: TabBarProps) {
     which in turn lets height:100% work on the canvas element.
   */
   const base =
-    'flex-1 flex flex-col justify-between items-center h-[180px] pt-3 px-1.5 rounded-xl transition-all duration-300 overflow-hidden';
+    'flex-1 flex flex-col justify-between items-center h-[180px] pt-3 px-1.5 rounded-xl transition-all duration-300 overflow-hidden lg:h-[280px] lg:pt-5 lg:px-3 lg:rounded-2xl';
 
   return (
-    <div className="flex gap-2">
+    <div className="flex gap-2 lg:gap-4">
 
       {/* ══════════════ NUMEROLOGY — Sacred Geometry ══════════════ */}
       <button
@@ -329,7 +329,7 @@ export function TabBar({ active, onChange }: TabBarProps) {
         }`}
       >
         <div className="flex-1 w-full flex items-center justify-center">
-          <div className="relative w-[62px] h-[96px] rounded overflow-hidden border border-[#c4a25a]/35 shadow-lg shadow-black/50">
+          <div className="relative w-[62px] h-[96px] lg:w-[92px] lg:h-[140px] rounded overflow-hidden border border-[#c4a25a]/35 shadow-lg shadow-black/50">
             <img
               key={cardIndex}
               src={TAROT_IMAGES[TAROT_PREVIEW_KEYS[cardIndex]]}
