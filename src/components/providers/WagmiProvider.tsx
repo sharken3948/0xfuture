@@ -11,6 +11,7 @@ const WC_PROJECT_ID = process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID ?? '';
 
 const soneiumWithIcon = {
   ...soneium,
+  name: 'Soneium',
   iconUrl: '/soneium.png',
   iconBackground: '#000',
 };
