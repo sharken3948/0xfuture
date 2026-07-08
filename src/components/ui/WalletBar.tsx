@@ -57,7 +57,7 @@ export function WalletBar() {
                 </button>
 
                 {menuOpen && (
-                  <div className="absolute z-30 top-full right-0 mt-1.5 min-w-[176px] rounded-xl border border-violet-900/50 bg-[#0e0620]/95 backdrop-blur-sm shadow-xl shadow-black/60 p-1 space-y-0.5">
+                  <div className="absolute z-30 top-full right-0 mt-1.5 lg:mt-2 min-w-[176px] lg:min-w-[240px] rounded-xl lg:rounded-2xl border border-violet-900/50 bg-[#0e0620]/95 backdrop-blur-sm shadow-xl shadow-black/60 p-1 lg:p-1.5 space-y-0.5 lg:space-y-1">
                     {CHAIN_KEYS.map((k) => {
                       const cfg = CHAIN_CONFIGS[k];
                       const isCurrent = k === currentKey;
@@ -69,7 +69,7 @@ export function WalletBar() {
                             setMenuOpen(false);
                             if (!isCurrent) switchChain({ chainId: cfg.chain.id });
                           }}
-                          className={`w-full flex items-center gap-2 px-2 py-1.5 rounded-lg text-[11px] transition-colors ${
+                          className={`w-full flex items-center gap-2 lg:gap-3 px-2 py-1.5 lg:px-3 lg:py-2.5 rounded-lg lg:rounded-xl text-[11px] lg:text-[14px] transition-colors ${
                             isCurrent
                               ? 'bg-violet-900/40 text-violet-100'
                               : 'text-violet-200 hover:bg-violet-950/60'
@@ -78,27 +78,27 @@ export function WalletBar() {
                           <img
                             src={cfg.iconUrl}
                             alt=""
-                            className="w-4 h-4 rounded-full"
+                            className="w-4 h-4 lg:w-6 lg:h-6 rounded-full"
                             style={{ backgroundColor: cfg.iconBackground }}
                           />
                           <span className="flex-1 text-left">{cfg.label}</span>
                           {isCurrent && (
-                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400/80" />
+                            <span className="w-1.5 h-1.5 lg:w-2 lg:h-2 rounded-full bg-emerald-400/80" />
                           )}
                         </button>
                       );
                     })}
                     <div
                       aria-disabled
-                      className="w-full flex items-center gap-2 px-2 py-1.5 rounded-lg text-[11px] text-violet-400/40 select-none cursor-not-allowed"
+                      className="w-full flex items-center gap-2 lg:gap-3 px-2 py-1.5 lg:px-3 lg:py-2.5 rounded-lg lg:rounded-xl text-[11px] lg:text-[14px] text-violet-400/40 select-none cursor-not-allowed"
                     >
                       <img
                         src="/arc.png"
                         alt=""
-                        className="w-4 h-4 rounded-full grayscale opacity-50"
+                        className="w-4 h-4 lg:w-6 lg:h-6 rounded-full grayscale opacity-50"
                       />
                       <span className="flex-1 text-left">Arc Mainnet</span>
-                      <span className="text-[9px] tracking-widest uppercase text-emerald-400/60">
+                      <span className="text-[9px] lg:text-[11px] tracking-widest uppercase text-emerald-400/60">
                         soon
                       </span>
                     </div>
