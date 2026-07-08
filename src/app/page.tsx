@@ -23,7 +23,7 @@ export default function Home() {
     <main className="relative z-10 flex flex-col min-h-screen max-w-sm mx-auto px-4 py-5 lg:max-w-3xl lg:px-8 lg:py-8">
       {/* Header */}
       <div className="relative text-center mb-5 lg:mb-8">
-        <div className="lg:flex lg:items-center lg:justify-between lg:gap-6">
+        <div className="lg:flex lg:items-start lg:justify-between lg:gap-6">
           <div className="absolute left-0 top-0 lg:static">
             <MidnightCountdown />
           </div>

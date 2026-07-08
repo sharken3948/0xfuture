@@ -34,19 +34,19 @@ export function MidnightCountdown() {
   return (
     <div
       title="Readings reset at midnight UTC"
-      className="flex flex-col items-center py-1 cursor-default"
+      className="flex flex-col items-center py-1 lg:py-2 cursor-default"
     >
-      <span className="text-[11px] lg:text-[13px] font-semibold text-[#c4a25a] leading-none mb-0.5 lg:mb-1" style={{ letterSpacing: '0.08em', whiteSpace: 'nowrap' }}>
+      <span className="text-[11px] lg:text-[15px] font-semibold text-[#c4a25a] leading-none mb-0.5 lg:mb-1.5" style={{ letterSpacing: '0.08em', whiteSpace: 'nowrap' }}>
         RESET UTC
       </span>
-      <div className="flex items-center justify-center gap-1 lg:gap-1.5">
+      <div className="flex items-center justify-center gap-1 lg:gap-2">
         <span
-          className="text-[13px] lg:text-[17px] leading-none select-none"
+          className="text-[13px] lg:text-[20px] leading-none select-none"
           style={{ textShadow: moonGlow }}
         >
           🌙
         </span>
-        <span className="text-[11px] lg:text-[13px] font-semibold text-[#c4a25a] leading-none">
+        <span className="text-[11px] lg:text-[15px] font-semibold text-[#c4a25a] leading-none">
           {state.hours}h {String(state.minutes).padStart(2, '0')}m
         </span>
       </div>

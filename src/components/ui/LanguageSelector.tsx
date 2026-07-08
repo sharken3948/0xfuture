@@ -22,9 +22,9 @@ export function LanguageSelector() {
     <div ref={ref} className="relative">
       <button
         onClick={() => setOpen(o => !o)}
-        className="flex items-center gap-1.5 lg:gap-2 text-[11px] lg:text-[13px] text-[#a78bfa]/70 hover:text-[#a78bfa] transition-colors px-1.5 py-1 lg:px-2 lg:py-1.5 rounded-lg hover:bg-[#a78bfa]/10"
+        className="flex items-center gap-1.5 lg:gap-2.5 text-[11px] lg:text-[15px] text-[#a78bfa]/70 hover:text-[#a78bfa] transition-colors px-1.5 py-1 lg:px-3 lg:py-2 rounded-lg lg:rounded-xl hover:bg-[#a78bfa]/10"
       >
-        <img src={`https://flagcdn.com/24x18/${current.countryCode}.png`} alt={language} width={16} height={12} className="rounded-sm lg:w-5 lg:h-4" />
+        <img src={`https://flagcdn.com/24x18/${current.countryCode}.png`} alt={language} width={16} height={12} className="rounded-sm lg:w-6 lg:h-[18px]" />
         <span className="font-mono font-semibold tracking-wider">{language}</span>
       </button>
 

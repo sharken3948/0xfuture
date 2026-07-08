@@ -39,21 +39,21 @@ export function WalletBar() {
           const currentCfg = CHAIN_CONFIGS[currentKey];
 
           return (
-            <div className="flex items-center gap-1.5">
+            <div className="flex items-center gap-1.5 lg:gap-2.5">
               <div ref={menuRef} className="relative">
                 <button
                   type="button"
                   onClick={() => setMenuOpen((v) => !v)}
-                  className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-violet-900/50 bg-black/40 text-[11px] font-medium text-violet-200 hover:bg-violet-950/60 active:scale-[0.98] transition-all"
+                  className="inline-flex items-center gap-1.5 lg:gap-2 px-2.5 py-1.5 lg:px-3.5 lg:py-2.5 rounded-lg lg:rounded-xl border border-violet-900/50 bg-black/40 text-[11px] lg:text-[14px] font-medium text-violet-200 hover:bg-violet-950/60 active:scale-[0.98] transition-all"
                 >
                   <img
                     src={currentCfg.iconUrl}
                     alt=""
-                    className="w-4 h-4 rounded-full"
+                    className="w-4 h-4 lg:w-5 lg:h-5 rounded-full"
                     style={{ backgroundColor: currentCfg.iconBackground }}
                   />
                   <span>{currentCfg.label}</span>
-                  <span className="text-violet-500/70 text-[9px] leading-none">▾</span>
+                  <span className="text-violet-500/70 text-[9px] lg:text-[11px] leading-none">▾</span>
                 </button>
 
                 {menuOpen && (
@@ -109,7 +109,7 @@ export function WalletBar() {
               <button
                 type="button"
                 onClick={openAccountModal}
-                className="px-2.5 py-1.5 rounded-lg border border-violet-900/50 bg-black/40 text-[11px] font-mono font-medium text-violet-200 hover:bg-violet-950/60 active:scale-[0.98] transition-all"
+                className="px-2.5 py-1.5 lg:px-3.5 lg:py-2.5 rounded-lg lg:rounded-xl border border-violet-900/50 bg-black/40 text-[11px] lg:text-[14px] font-mono font-medium text-violet-200 hover:bg-violet-950/60 active:scale-[0.98] transition-all"
               >
                 {account.displayName}
               </button>
