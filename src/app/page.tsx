@@ -30,7 +30,7 @@ export default function Home() {
           <img
             src="/logo.png"
             alt="0xFUTURE"
-            className="mx-auto object-contain max-h-[180px] lg:mx-0 lg:max-h-[240px]"
+            className="mx-auto object-contain max-h-[180px] lg:mx-0 lg:max-h-[280px]"
           />
           <div className="absolute right-0 top-0 lg:static">
             <LanguageSelector />
