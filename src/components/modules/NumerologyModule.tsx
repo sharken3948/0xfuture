@@ -17,7 +17,7 @@ interface NumerologyResult {
 }
 
 export function NumerologyModule() {
-  const { walletAddress, connect } = useMiniKit();
+  const { walletAddress, connect, selectedChainKey } = useMiniKit();
   const { language } = useLanguage();
   const t = useTranslations();
   const [state, setState] = useState<ReadingState>('idle');
@@ -111,7 +111,7 @@ export function NumerologyModule() {
             </p>
           </ReadingCard>
 
-          <ShareButton text={t.numerology.shareText(result.lifePathNumber)} />
+          <ShareButton text={t.numerology.shareText(result.lifePathNumber, selectedChainKey)} chainKey={selectedChainKey} />
 
           <button
             onClick={() => { setResult(null); setState('idle'); }}

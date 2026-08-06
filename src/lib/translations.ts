@@ -1,3 +1,5 @@
+import type { ChainKey } from '@/types';
+
 export type LangCode = 'EN' | 'TR' | 'ES' | 'PT' | 'FR' | 'DE' | 'RU' | 'ZH' | 'HI' | 'UR' | 'YO';
 
 export interface Language {
@@ -43,7 +45,7 @@ export interface T {
   common: {
     howDoesThisWork: string;
     history: string;
-    shareOnFarcaster: string;
+    shareOnX: string;
     tryAgain: string;
     entertainment: string;
     oracleReading: string;
@@ -62,7 +64,7 @@ export interface T {
     history: string;
     resultTitle: string;
     derivedFrom: string;
-    shareText: (num: number) => string;
+    shareText: (num: number, chainKey: ChainKey) => string;
     readAgain: string;
   };
   astrology: {
@@ -75,7 +77,7 @@ export interface T {
     firstTx: string;
     birthSign: string;
     zodiacSigns: Record<string, string>;
-    shareText: (sign: string) => string;
+    shareText: (sign: string, chainKey: ChainKey) => string;
   };
   tarot: {
     description: string;
@@ -84,7 +86,7 @@ export interface T {
     howItWorks: string;
     history: string;
     positions: [string, string, string];
-    shareText: (cards: string) => string;
+    shareText: (cards: string, chainKey: ChainKey) => string;
   };
 }
 
@@ -95,7 +97,7 @@ export const TRANSLATIONS: Record<LangCode, T> = {
     common: {
       howDoesThisWork: 'How does this work?',
       history: '✦ History',
-      shareOnFarcaster: 'Share on Farcaster',
+      shareOnX: 'Share on X',
       tryAgain: 'Try Again',
       entertainment: 'Readings are for entertainment purposes only.',
       oracleReading: 'Oracle Reading',
@@ -114,7 +116,7 @@ export const TRANSLATIONS: Record<LangCode, T> = {
       history: 'Numerology dates back over 2,500 years to ancient Babylon and Egypt. Pythagoras, the Greek mathematician, formalized it around 500 BC, believing numbers were the foundation of all existence. From the Kabbalah to Renaissance scholars, numerology has been used to decode personality, destiny, and cosmic purpose. Today, your wallet address becomes your numerical identity in the onchain universe.',
       resultTitle: 'Life Path Number',
       derivedFrom: 'Derived from',
-      shareText: (num) => `I just discovered my onchain Life Path Number is ${num} ✦ Find yours at 0xfuture.xyz #0xFUTURE #Base`,
+      shareText: (num, chainKey) => `I just discovered my onchain Life Path Number is ${num} ✦ Find yours #0xFUTURE ${chainKey === 'base' ? '#Base' : '#Soneium'}`,
       readAgain: 'Read Again',
     },
     astrology: {
@@ -127,7 +129,7 @@ export const TRANSLATIONS: Record<LangCode, T> = {
       firstTx: 'First TX:',
       birthSign: 'Onchain Birth Sign',
       zodiacSigns: { Aries: 'Aries', Taurus: 'Taurus', Gemini: 'Gemini', Cancer: 'Cancer', Leo: 'Leo', Virgo: 'Virgo', Libra: 'Libra', Scorpio: 'Scorpio', Sagittarius: 'Sagittarius', Capricorn: 'Capricorn', Aquarius: 'Aquarius', Pisces: 'Pisces' },
-      shareText: (sign) => `My onchain birth sign is ${sign} ✦ Discover yours at 0xfuture.xyz #0xFUTURE #Base`,
+      shareText: (sign, chainKey) => `My onchain birth sign is ${sign} ✦ Discover yours #0xFUTURE ${chainKey === 'base' ? '#Base' : '#Soneium'}`,
     },
     tarot: {
       description: 'Your wallet and today\'s energy choose your cards. A new reading awaits at midnight...',
@@ -136,7 +138,7 @@ export const TRANSLATIONS: Record<LangCode, T> = {
       howItWorks: 'Each day, 3 cards are drawn from a full 78 card Rider Waite deck. The selection is uniquely seeded by your wallet address combined with today\'s date, making your reading personal to you. Cards reset at midnight UTC, reflecting the energy of each new day. The three positions reveal your Past, Present, and Future.',
       history: 'Tarot cards originated in 15th century northern Italy as playing cards. By the 18th century, French occultists began using them for divination. The iconic Rider Waite deck illustrated by Pamela Colman Smith in 1909 became the world standard and is the deck used here. Today tarot is practiced by millions worldwide as a tool for reflection, intuition and self discovery.',
       positions: ['Past', 'Present', 'Future'],
-      shareText: (cards) => `My onchain tarot reading for today: ${cards} ✦ Get yours at 0xfuture.xyz #0xFUTURE #Base`,
+      shareText: (cards, chainKey) => `My onchain tarot reading for today: ${cards} ✦ Get yours #0xFUTURE ${chainKey === 'base' ? '#Base' : '#Soneium'}`,
     },
   },
 
@@ -145,7 +147,7 @@ export const TRANSLATIONS: Record<LangCode, T> = {
     common: {
       howDoesThisWork: 'Bu nasıl çalışır?',
       history: '✦ Tarih',
-      shareOnFarcaster: "Farcaster'da Paylaş",
+      shareOnX: "X'te Paylaş",
       tryAgain: 'Tekrar Dene',
       entertainment: 'Okumalar yalnızca eğlence amaçlıdır.',
       oracleReading: 'Kehanet Okuma',
@@ -164,7 +166,7 @@ export const TRANSLATIONS: Record<LangCode, T> = {
       history: 'Numeroloji 2.500 yılı aşkın bir süre önce antik Babil ve Mısır dönemlerine dayanır. Yunanlı matematikçi Pisagor MÖ 500 civarında sayıların tüm varoluşun temeli olduğuna inanarak bunu resmileştirdi. Kabala\'dan Rönesans bilginlerine kadar numeroloji kişilik, kader ve kozmik amacı çözmek için kullanılmıştır. Bugün cüzdan adresiniz onchain evrendeki sayısal kimliğiniz haline geliyor.',
       resultTitle: 'Yaşam Yolu Sayısı',
       derivedFrom: 'Türetilen',
-      shareText: (num) => `Onchain Yaşam Yolu Numaram ${num} olduğunu yeni keşfettim ✦ Seninkini bul 0xfuture.xyz #0xFUTURE #Base`,
+      shareText: (num, chainKey) => `Onchain Yaşam Yolu Numaram ${num} olduğunu yeni keşfettim ✦ Seninkini bul #0xFUTURE ${chainKey === 'base' ? '#Base' : '#Soneium'}`,
       readAgain: 'Tekrar Oku',
     },
     astrology: {
@@ -177,7 +179,7 @@ export const TRANSLATIONS: Record<LangCode, T> = {
       firstTx: 'İlk İşlem:',
       birthSign: 'Onchain Doğum Burcu',
       zodiacSigns: { Aries: 'Koç', Taurus: 'Boğa', Gemini: 'İkizler', Cancer: 'Yengeç', Leo: 'Aslan', Virgo: 'Başak', Libra: 'Terazi', Scorpio: 'Akrep', Sagittarius: 'Yay', Capricorn: 'Oğlak', Aquarius: 'Kova', Pisces: 'Balık' },
-      shareText: (sign) => `Onchain doğum burcum ${sign} ✦ Seninkini keşfet 0xfuture.xyz #0xFUTURE #Base`,
+      shareText: (sign, chainKey) => `Onchain doğum burcum ${sign} ✦ Seninkini keşfet #0xFUTURE ${chainKey === 'base' ? '#Base' : '#Soneium'}`,
     },
     tarot: {
       description: 'Cüzdanınız ve bugünün enerjisi kartlarınızı seçer. Gece yarısında yeni bir okuma sizi bekliyor...',
@@ -186,7 +188,7 @@ export const TRANSLATIONS: Record<LangCode, T> = {
       howItWorks: 'Her gün tam bir 78 kartlık Rider Waite destesinden 3 kart çekilir. Seçim bugünün tarihiyle birleştirilmiş cüzdan adresinizle benzersiz biçimde belirlenir ve okumayı size özel kılar. Kartlar UTC gece yarısında sıfırlanır ve her yeni günün enerjisini yansıtır. Üç pozisyon Geçmişinizi Şimdinizi ve Geleceğinizi ortaya koyar.',
       history: 'Tarot kartları 15. yüzyılda Kuzey İtalya\'da oyun kartları olarak ortaya çıktı. 18. yüzyılda Fransız okültistler onları kehanet için kullanmaya başladı. 1909\'da Pamela Colman Smith tarafından illüstre edilen ikonik Rider Waite destesi dünya standardı haline geldi ve burada kullanılan deste budur. Bugün tarot dünya genelinde milyonlarca kişi tarafından yansıtma sezgi ve öz keşif aracı olarak uygulanmaktadır.',
       positions: ['Geçmiş', 'Şimdiki', 'Gelecek'],
-      shareText: (cards) => `Bugünkü onchain tarot okuması: ${cards} ✦ Seninki için 0xfuture.xyz #0xFUTURE #Base`,
+      shareText: (cards, chainKey) => `Bugünkü onchain tarot okuması: ${cards} ✦ Seninki için #0xFUTURE ${chainKey === 'base' ? '#Base' : '#Soneium'}`,
     },
   },
 
@@ -195,7 +197,7 @@ export const TRANSLATIONS: Record<LangCode, T> = {
     common: {
       howDoesThisWork: '¿Cómo funciona esto?',
       history: '✦ Historia',
-      shareOnFarcaster: 'Compartir en Farcaster',
+      shareOnX: 'Compartir en X',
       tryAgain: 'Intentar de Nuevo',
       entertainment: 'Las lecturas son solo para fines de entretenimiento.',
       oracleReading: 'Lectura del Oráculo',
@@ -214,7 +216,7 @@ export const TRANSLATIONS: Record<LangCode, T> = {
       history: 'La numerología se remonta más de 2.500 años a la antigua Babilonia y Egipto. Pitágoras el matemático griego la formalizó alrededor del 500 a.C. creyendo que los números eran la base de toda existencia. Desde la Cábala hasta los eruditos del Renacimiento la numerología se ha utilizado para descifrar la personalidad el destino y el propósito cósmico. Hoy tu dirección de billetera se convierte en tu identidad numérica en el universo onchain.',
       resultTitle: 'Número del Camino de Vida',
       derivedFrom: 'Derivado de',
-      shareText: (num) => `Acabo de descubrir que mi Número del Camino de Vida onchain es ${num} ✦ Encuentra el tuyo en 0xfuture.xyz #0xFUTURE #Base`,
+      shareText: (num, chainKey) => `Acabo de descubrir que mi Número del Camino de Vida onchain es ${num} ✦ Encuentra el tuyo #0xFUTURE ${chainKey === 'base' ? '#Base' : '#Soneium'}`,
       readAgain: 'Leer de Nuevo',
     },
     astrology: {
@@ -227,7 +229,7 @@ export const TRANSLATIONS: Record<LangCode, T> = {
       firstTx: 'Primera TX:',
       birthSign: 'Signo de Nacimiento Onchain',
       zodiacSigns: { Aries: 'Aries', Taurus: 'Tauro', Gemini: 'Géminis', Cancer: 'Cáncer', Leo: 'Leo', Virgo: 'Virgo', Libra: 'Libra', Scorpio: 'Escorpio', Sagittarius: 'Sagitario', Capricorn: 'Capricornio', Aquarius: 'Acuario', Pisces: 'Piscis' },
-      shareText: (sign) => `Mi signo de nacimiento onchain es ${sign} ✦ Descubre el tuyo en 0xfuture.xyz #0xFUTURE #Base`,
+      shareText: (sign, chainKey) => `Mi signo de nacimiento onchain es ${sign} ✦ Descubre el tuyo #0xFUTURE ${chainKey === 'base' ? '#Base' : '#Soneium'}`,
     },
     tarot: {
       description: 'Tu billetera y la energía de hoy eligen tus cartas. Una nueva lectura te espera a medianoche...',
@@ -236,7 +238,7 @@ export const TRANSLATIONS: Record<LangCode, T> = {
       howItWorks: 'Cada día se extraen 3 cartas de una baraja completa de 78 cartas del Rider Waite. La selección se genera únicamente a partir de tu dirección de billetera combinada con la fecha de hoy haciendo tu lectura personal. Las cartas se reinician a medianoche UTC reflejando la energía de cada nuevo día. Las tres posiciones revelan tu Pasado Presente y Futuro.',
       history: 'Las cartas del tarot se originaron en el norte de Italia del siglo XV como cartas de juego. Para el siglo XVIII los ocultistas franceses comenzaron a usarlas para la adivinación. La icónica baraja Rider Waite ilustrada por Pamela Colman Smith en 1909 se convirtió en el estándar mundial y es la baraja utilizada aquí. Hoy el tarot es practicado por millones en todo el mundo como herramienta de reflexión intuición y autodescubrimiento.',
       positions: ['Pasado', 'Presente', 'Futuro'],
-      shareText: (cards) => `Mi lectura de tarot onchain de hoy: ${cards} ✦ Obtén la tuya en 0xfuture.xyz #0xFUTURE #Base`,
+      shareText: (cards, chainKey) => `Mi lectura de tarot onchain de hoy: ${cards} ✦ Obtén la tuya #0xFUTURE ${chainKey === 'base' ? '#Base' : '#Soneium'}`,
     },
   },
 
@@ -245,7 +247,7 @@ export const TRANSLATIONS: Record<LangCode, T> = {
     common: {
       howDoesThisWork: 'Como isso funciona?',
       history: '✦ História',
-      shareOnFarcaster: 'Compartilhar no Farcaster',
+      shareOnX: 'Compartilhar no X',
       tryAgain: 'Tentar Novamente',
       entertainment: 'As leituras são apenas para fins de entretenimento.',
       oracleReading: 'Leitura do Oráculo',
@@ -264,7 +266,7 @@ export const TRANSLATIONS: Record<LangCode, T> = {
       history: 'A numerologia remonta a mais de 2.500 anos para a antiga Babilônia e Egito. Pitágoras o matemático grego a formalizou por volta de 500 a.C. acreditando que os números eram a base de toda a existência. Da Cabala aos estudiosos renascentistas a numerologia tem sido usada para decifrar personalidade destino e propósito cósmico. Hoje seu endereço de carteira torna-se sua identidade numérica no universo onchain.',
       resultTitle: 'Número do Caminho de Vida',
       derivedFrom: 'Derivado de',
-      shareText: (num) => `Acabei de descobrir que meu Número do Caminho de Vida onchain é ${num} ✦ Encontre o seu em 0xfuture.xyz #0xFUTURE #Base`,
+      shareText: (num, chainKey) => `Acabei de descobrir que meu Número do Caminho de Vida onchain é ${num} ✦ Encontre o seu #0xFUTURE ${chainKey === 'base' ? '#Base' : '#Soneium'}`,
       readAgain: 'Ler Novamente',
     },
     astrology: {
@@ -277,7 +279,7 @@ export const TRANSLATIONS: Record<LangCode, T> = {
       firstTx: 'Primeira TX:',
       birthSign: 'Signo de Nascimento Onchain',
       zodiacSigns: { Aries: 'Áries', Taurus: 'Touro', Gemini: 'Gêmeos', Cancer: 'Câncer', Leo: 'Leão', Virgo: 'Virgem', Libra: 'Libra', Scorpio: 'Escorpião', Sagittarius: 'Sagitário', Capricorn: 'Capricórnio', Aquarius: 'Aquário', Pisces: 'Peixes' },
-      shareText: (sign) => `Meu signo de nascimento onchain é ${sign} ✦ Descubra o seu em 0xfuture.xyz #0xFUTURE #Base`,
+      shareText: (sign, chainKey) => `Meu signo de nascimento onchain é ${sign} ✦ Descubra o seu #0xFUTURE ${chainKey === 'base' ? '#Base' : '#Soneium'}`,
     },
     tarot: {
       description: 'Sua carteira e a energia de hoje escolhem suas cartas. Uma nova leitura aguarda à meia-noite...',
@@ -286,7 +288,7 @@ export const TRANSLATIONS: Record<LangCode, T> = {
       howItWorks: 'Todos os dias 3 cartas são retiradas de um baralho completo de 78 cartas do Rider Waite. A seleção é gerada exclusivamente pelo seu endereço de carteira combinado com a data de hoje tornando sua leitura pessoal. As cartas se reiniciam à meia-noite UTC refletindo a energia de cada novo dia. As três posições revelam seu Passado Presente e Futuro.',
       history: 'As cartas de tarot se originaram no norte da Itália do século XV como cartas de baralho. No século XVIII ocultistas franceses começaram a usá-las para adivinhação. O icônico baralho Rider Waite ilustrado por Pamela Colman Smith em 1909 tornou-se o padrão mundial e é o baralho usado aqui. Hoje o tarot é praticado por milhões em todo o mundo como ferramenta de reflexão intuição e autodescoberta.',
       positions: ['Passado', 'Presente', 'Futuro'],
-      shareText: (cards) => `Minha leitura de tarot onchain de hoje: ${cards} ✦ Obtenha a sua em 0xfuture.xyz #0xFUTURE #Base`,
+      shareText: (cards, chainKey) => `Minha leitura de tarot onchain de hoje: ${cards} ✦ Obtenha a sua #0xFUTURE ${chainKey === 'base' ? '#Base' : '#Soneium'}`,
     },
   },
 
@@ -295,7 +297,7 @@ export const TRANSLATIONS: Record<LangCode, T> = {
     common: {
       howDoesThisWork: 'Comment ça fonctionne ?',
       history: '✦ Histoire',
-      shareOnFarcaster: 'Partager sur Farcaster',
+      shareOnX: 'Partager sur X',
       tryAgain: 'Réessayer',
       entertainment: 'Les lectures sont uniquement à des fins de divertissement.',
       oracleReading: "Lecture de l'Oracle",
@@ -314,7 +316,7 @@ export const TRANSLATIONS: Record<LangCode, T> = {
       history: "La numérologie remonte à plus de 2.500 ans dans l'ancienne Babylone et l'Égypte. Pythagore le mathématicien grec l'a formalisée vers 500 avant J.C. croyant que les nombres étaient le fondement de toute existence. De la Kabbale aux érudits de la Renaissance la numérologie a été utilisée pour décoder la personnalité le destin et le but cosmique. Aujourd'hui votre adresse de portefeuille devient votre identité numérique dans l'univers onchain.",
       resultTitle: 'Nombre du Chemin de Vie',
       derivedFrom: 'Dérivé de',
-      shareText: (num) => `Je viens de découvrir que mon Nombre du Chemin de Vie onchain est ${num} ✦ Trouvez le vôtre sur 0xfuture.xyz #0xFUTURE #Base`,
+      shareText: (num, chainKey) => `Je viens de découvrir que mon Nombre du Chemin de Vie onchain est ${num} ✦ Trouvez le vôtre #0xFUTURE ${chainKey === 'base' ? '#Base' : '#Soneium'}`,
       readAgain: 'Relire',
     },
     astrology: {
@@ -327,7 +329,7 @@ export const TRANSLATIONS: Record<LangCode, T> = {
       firstTx: 'Première TX:',
       birthSign: 'Signe de Naissance Onchain',
       zodiacSigns: { Aries: 'Bélier', Taurus: 'Taureau', Gemini: 'Gémeaux', Cancer: 'Cancer', Leo: 'Lion', Virgo: 'Vierge', Libra: 'Balance', Scorpio: 'Scorpion', Sagittarius: 'Sagittaire', Capricorn: 'Capricorne', Aquarius: 'Verseau', Pisces: 'Poissons' },
-      shareText: (sign) => `Mon signe de naissance onchain est ${sign} ✦ Découvrez le vôtre sur 0xfuture.xyz #0xFUTURE #Base`,
+      shareText: (sign, chainKey) => `Mon signe de naissance onchain est ${sign} ✦ Découvrez le vôtre #0xFUTURE ${chainKey === 'base' ? '#Base' : '#Soneium'}`,
     },
     tarot: {
       description: "Votre portefeuille et l'énergie d'aujourd'hui choisissent vos cartes. Une nouvelle lecture vous attend à minuit...",
@@ -336,7 +338,7 @@ export const TRANSLATIONS: Record<LangCode, T> = {
       howItWorks: "Chaque jour 3 cartes sont tirées d'un jeu complet de 78 cartes Rider Waite. La sélection est générée uniquement à partir de votre adresse de portefeuille combinée à la date d'aujourd'hui rendant votre lecture personnelle. Les cartes se réinitialisent à minuit UTC reflétant l'énergie de chaque nouveau jour. Les trois positions révèlent votre Passé Présent et Futur.",
       history: "Les cartes de tarot sont nées dans le nord de l'Italie au XVe siècle comme cartes à jouer. Au XVIIIe siècle les occultistes français ont commencé à les utiliser pour la divination. L'emblématique jeu Rider Waite illustré par Pamela Colman Smith en 1909 est devenu la norme mondiale et c'est le jeu utilisé ici. Aujourd'hui le tarot est pratiqué par des millions de personnes dans le monde entier comme outil de réflexion d'intuition et de découverte de soi.",
       positions: ['Passé', 'Présent', 'Futur'],
-      shareText: (cards) => `Ma lecture de tarot onchain d'aujourd'hui: ${cards} ✦ Obtenez la vôtre sur 0xfuture.xyz #0xFUTURE #Base`,
+      shareText: (cards, chainKey) => `Ma lecture de tarot onchain d'aujourd'hui: ${cards} ✦ Obtenez la vôtre #0xFUTURE ${chainKey === 'base' ? '#Base' : '#Soneium'}`,
     },
   },
 
@@ -345,7 +347,7 @@ export const TRANSLATIONS: Record<LangCode, T> = {
     common: {
       howDoesThisWork: 'Wie funktioniert das?',
       history: '✦ Geschichte',
-      shareOnFarcaster: 'Auf Farcaster teilen',
+      shareOnX: 'Auf X teilen',
       tryAgain: 'Nochmal versuchen',
       entertainment: 'Lesungen dienen ausschließlich Unterhaltungszwecken.',
       oracleReading: 'Orakel Lesung',
@@ -364,7 +366,7 @@ export const TRANSLATIONS: Record<LangCode, T> = {
       history: 'Numerologie reicht über 2.500 Jahre zurück bis ins antike Babylon und Ägypten. Pythagoras der griechische Mathematiker formalisierte sie um 500 v. Chr. mit der Überzeugung dass Zahlen das Fundament aller Existenz seien. Von der Kabbala bis zu Renaissance-Gelehrten wurde Numerologie verwendet um Persönlichkeit Schicksal und kosmischen Zweck zu entschlüsseln. Heute wird deine Wallet-Adresse zu deiner numerischen Identität im Onchain-Universum.',
       resultTitle: 'Lebenspfad-Zahl',
       derivedFrom: 'Abgeleitet von',
-      shareText: (num) => `Ich habe gerade meine Onchain Lebenspfad-Zahl ${num} entdeckt ✦ Finde deine auf 0xfuture.xyz #0xFUTURE #Base`,
+      shareText: (num, chainKey) => `Ich habe gerade meine Onchain Lebenspfad-Zahl ${num} entdeckt ✦ Finde deine #0xFUTURE ${chainKey === 'base' ? '#Base' : '#Soneium'}`,
       readAgain: 'Nochmal lesen',
     },
     astrology: {
@@ -377,7 +379,7 @@ export const TRANSLATIONS: Record<LangCode, T> = {
       firstTx: 'Erste TX:',
       birthSign: 'Onchain-Geburtszeichen',
       zodiacSigns: { Aries: 'Widder', Taurus: 'Stier', Gemini: 'Zwillinge', Cancer: 'Krebs', Leo: 'Löwe', Virgo: 'Jungfrau', Libra: 'Waage', Scorpio: 'Skorpion', Sagittarius: 'Schütze', Capricorn: 'Steinbock', Aquarius: 'Wassermann', Pisces: 'Fische' },
-      shareText: (sign) => `Mein Onchain-Geburtszeichen ist ${sign} ✦ Entdecke deines auf 0xfuture.xyz #0xFUTURE #Base`,
+      shareText: (sign, chainKey) => `Mein Onchain-Geburtszeichen ist ${sign} ✦ Entdecke deines #0xFUTURE ${chainKey === 'base' ? '#Base' : '#Soneium'}`,
     },
     tarot: {
       description: 'Deine Wallet und die Energie des Tages wählen deine Karten. Eine neue Lesung wartet um Mitternacht...',
@@ -386,7 +388,7 @@ export const TRANSLATIONS: Record<LangCode, T> = {
       howItWorks: 'Jeden Tag werden 3 Karten aus einem vollständigen 78-Karten Rider Waite Deck gezogen. Die Auswahl wird einzigartig durch deine Wallet-Adresse kombiniert mit dem heutigen Datum generiert was deine Lesung persönlich macht. Die Karten werden um Mitternacht UTC zurückgesetzt und spiegeln die Energie jedes neuen Tages wider. Die drei Positionen enthüllen deine Vergangenheit Gegenwart und Zukunft.',
       history: 'Tarotkarten entstanden im 15. Jahrhundert in Norditalien als Spielkarten. Im 18. Jahrhundert begannen französische Okkultisten sie für die Weissagung zu verwenden. Das ikonische Rider Waite Deck illustriert von Pamela Colman Smith im Jahr 1909 wurde zum weltweiten Standard und ist das hier verwendete Deck. Heute wird Tarot von Millionen weltweit als Werkzeug zur Reflexion Intuition und Selbstentdeckung praktiziert.',
       positions: ['Vergangenheit', 'Gegenwart', 'Zukunft'],
-      shareText: (cards) => `Meine Onchain Tarot Lesung für heute: ${cards} ✦ Hol deine auf 0xfuture.xyz #0xFUTURE #Base`,
+      shareText: (cards, chainKey) => `Meine Onchain Tarot Lesung für heute: ${cards} ✦ Hol deine #0xFUTURE ${chainKey === 'base' ? '#Base' : '#Soneium'}`,
     },
   },
 
@@ -395,7 +397,7 @@ export const TRANSLATIONS: Record<LangCode, T> = {
     common: {
       howDoesThisWork: 'Как это работает?',
       history: '✦ История',
-      shareOnFarcaster: 'Поделиться в Farcaster',
+      shareOnX: 'Поделиться в X',
       tryAgain: 'Попробовать снова',
       entertainment: 'Чтения предназначены только для развлекательных целей.',
       oracleReading: 'Чтение Оракула',
@@ -414,7 +416,7 @@ export const TRANSLATIONS: Record<LangCode, T> = {
       history: 'Нумерология восходит к более чем 2500 годам в древнем Вавилоне и Египте. Пифагор греческий математик формализовал её около 500 г. до н.э. полагая что числа являются основой всего существования. От Каббалы до учёных эпохи Возрождения нумерология использовалась для расшифровки личности судьбы и космической цели. Сегодня адрес вашего кошелька становится вашей числовой идентичностью в онлайн вселенной.',
       resultTitle: 'Число Жизненного Пути',
       derivedFrom: 'Производное от',
-      shareText: (num) => `Я только что обнаружил своё Число Жизненного Пути онлайн: ${num} ✦ Найдите своё на 0xfuture.xyz #0xFUTURE #Base`,
+      shareText: (num, chainKey) => `Я только что обнаружил своё Число Жизненного Пути онлайн: ${num} ✦ Найдите своё #0xFUTURE ${chainKey === 'base' ? '#Base' : '#Soneium'}`,
       readAgain: 'Читать снова',
     },
     astrology: {
@@ -427,7 +429,7 @@ export const TRANSLATIONS: Record<LangCode, T> = {
       firstTx: 'Первая TX:',
       birthSign: 'Ончейн Знак Рождения',
       zodiacSigns: { Aries: 'Овен', Taurus: 'Телец', Gemini: 'Близнецы', Cancer: 'Рак', Leo: 'Лев', Virgo: 'Дева', Libra: 'Весы', Scorpio: 'Скорпион', Sagittarius: 'Стрелец', Capricorn: 'Козерог', Aquarius: 'Водолей', Pisces: 'Рыбы' },
-      shareText: (sign) => `Мой ончейн знак рождения ${sign} ✦ Узнайте свой на 0xfuture.xyz #0xFUTURE #Base`,
+      shareText: (sign, chainKey) => `Мой ончейн знак рождения ${sign} ✦ Узнайте свой #0xFUTURE ${chainKey === 'base' ? '#Base' : '#Soneium'}`,
     },
     tarot: {
       description: 'Ваш кошелёк и энергия сегодняшнего дня выбирают ваши карты. Новое чтение ждёт вас в полночь...',
@@ -436,7 +438,7 @@ export const TRANSLATIONS: Record<LangCode, T> = {
       howItWorks: 'Каждый день из полной колоды Райдера Уэйта из 78 карт вытягиваются 3 карты. Выбор уникально формируется вашим адресом кошелька в сочетании с сегодняшней датой делая чтение личным для вас. Карты обнуляются в полночь по UTC отражая энергию каждого нового дня. Три позиции раскрывают ваше Прошлое Настоящее и Будущее.',
       history: 'Карты Таро возникли в 15 веке в Северной Италии как игральные карты. К 18 веку французские оккультисты начали использовать их для гадания. Культовая колода Райдера Уэйта проиллюстрированная Памелой Колман Смит в 1909 году стала мировым стандартом и является колодой используемой здесь. Сегодня Таро практикуют миллионы людей по всему миру как инструмент для размышлений интуиции и самопознания.',
       positions: ['Прошлое', 'Настоящее', 'Будущее'],
-      shareText: (cards) => `Моё ончейн таро чтение сегодня: ${cards} ✦ Получите своё на 0xfuture.xyz #0xFUTURE #Base`,
+      shareText: (cards, chainKey) => `Моё ончейн таро чтение сегодня: ${cards} ✦ Получите своё #0xFUTURE ${chainKey === 'base' ? '#Base' : '#Soneium'}`,
     },
   },
 
@@ -445,7 +447,7 @@ export const TRANSLATIONS: Record<LangCode, T> = {
     common: {
       howDoesThisWork: '这是如何工作的？',
       history: '✦ 历史',
-      shareOnFarcaster: '分享到 Farcaster',
+      shareOnX: '分享到 X',
       tryAgain: '再试一次',
       entertainment: '解读仅供娱乐目的。',
       oracleReading: '神谕解读',
@@ -464,7 +466,7 @@ export const TRANSLATIONS: Record<LangCode, T> = {
       history: '数字命理学可追溯至2500多年前的古巴比伦和埃及。希腊数学家毕达哥拉斯在公元前500年将其系统化他相信数字是所有存在的基础。从卡巴拉到文艺复兴学者数字命理学一直被用于解读个性命运和宇宙目的。今天您的钱包地址成为了链上宇宙中您的数字身份。',
       resultTitle: '生命路径数',
       derivedFrom: '来自',
-      shareText: (num) => `我刚发现我的链上生命路径数是 ${num} ✦ 在 0xfuture.xyz 发现你的 #0xFUTURE #Base`,
+      shareText: (num, chainKey) => `我刚发现我的链上生命路径数是 ${num} ✦ 发现你的 #0xFUTURE ${chainKey === 'base' ? '#Base' : '#Soneium'}`,
       readAgain: '再次阅读',
     },
     astrology: {
@@ -477,7 +479,7 @@ export const TRANSLATIONS: Record<LangCode, T> = {
       firstTx: '首次交易：',
       birthSign: '链上出生星座',
       zodiacSigns: { Aries: '白羊座', Taurus: '金牛座', Gemini: '双子座', Cancer: '巨蟹座', Leo: '狮子座', Virgo: '处女座', Libra: '天秤座', Scorpio: '天蝎座', Sagittarius: '射手座', Capricorn: '摩羯座', Aquarius: '水瓶座', Pisces: '双鱼座' },
-      shareText: (sign) => `我的链上出生星座是 ${sign} ✦ 在 0xfuture.xyz 发现你的 #0xFUTURE #Base`,
+      shareText: (sign, chainKey) => `我的链上出生星座是 ${sign} ✦ 发现你的 #0xFUTURE ${chainKey === 'base' ? '#Base' : '#Soneium'}`,
     },
     tarot: {
       description: '您的钱包和今日能量为您选牌。每天午夜等待新的解读...',
@@ -486,7 +488,7 @@ export const TRANSLATIONS: Record<LangCode, T> = {
       howItWorks: '每天从完整的78张牌骑士韦特牌组中抽取3张牌。选择由您的钱包地址与今日日期组合唯一确定使您的解读专属于您。牌在UTC午夜重置反映每个新日的能量。三个位置揭示您的过去现在和未来。',
       history: '塔罗牌起源于15世纪北意大利的纸牌游戏。到18世纪法国神秘主义者开始将其用于占卜。1909年由帕梅拉科尔曼史密斯绘制的标志性骑士韦特牌组成为世界标准也是本处使用的牌组。如今塔罗被全球数百万人用作反思直觉和自我发现的工具。',
       positions: ['过去', '现在', '未来'],
-      shareText: (cards) => `我今天的链上塔罗解读: ${cards} ✦ 在 0xfuture.xyz 获取你的 #0xFUTURE #Base`,
+      shareText: (cards, chainKey) => `我今天的链上塔罗解读: ${cards} ✦ 获取你的 #0xFUTURE ${chainKey === 'base' ? '#Base' : '#Soneium'}`,
     },
   },
 
@@ -495,7 +497,7 @@ export const TRANSLATIONS: Record<LangCode, T> = {
     common: {
       howDoesThisWork: 'यह कैसे काम करता है?',
       history: '✦ इतिहास',
-      shareOnFarcaster: 'Farcaster पर शेयर करें',
+      shareOnX: 'X पर शेयर करें',
       tryAgain: 'फिर से प्रयास करें',
       entertainment: 'पाठ केवल मनोरंजन प्रयोजनों के लिए हैं।',
       oracleReading: 'दैवज्ञ पाठ',
@@ -514,7 +516,7 @@ export const TRANSLATIONS: Record<LangCode, T> = {
       history: 'अंकज्योतिष 2500 से अधिक वर्षों पहले प्राचीन बेबीलोन और मिस्र से आता है। यूनानी गणितज्ञ पाइथागोरस ने लगभग 500 ईसा पूर्व इसे औपचारिक रूप दिया यह मानते हुए कि संख्याएं सभी अस्तित्व का आधार हैं। कबाला से लेकर पुनर्जागरण के विद्वानों तक अंकज्योतिष का उपयोग व्यक्तित्व भाग्य और ब्रह्मांडीय उद्देश्य को समझने के लिए किया गया है। आज आपका वॉलेट पता ऑनचेन ब्रह्मांड में आपकी संख्यात्मक पहचान बन जाता है।',
       resultTitle: 'जीवन पथ संख्या',
       derivedFrom: 'से व्युत्पन्न',
-      shareText: (num) => `मैंने अभी खोजा कि मेरा ऑनचेन जीवन पथ संख्या ${num} है ✦ अपना खोजें 0xfuture.xyz पर #0xFUTURE #Base`,
+      shareText: (num, chainKey) => `मैंने अभी खोजा कि मेरा ऑनचेन जीवन पथ संख्या ${num} है ✦ अपना खोजें #0xFUTURE ${chainKey === 'base' ? '#Base' : '#Soneium'}`,
       readAgain: 'फिर से पढ़ें',
     },
     astrology: {
@@ -527,7 +529,7 @@ export const TRANSLATIONS: Record<LangCode, T> = {
       firstTx: 'पहला TX:',
       birthSign: 'ऑनचेन जन्म राशि',
       zodiacSigns: { Aries: 'मेष', Taurus: 'वृषभ', Gemini: 'मिथुन', Cancer: 'कर्क', Leo: 'सिंह', Virgo: 'कन्या', Libra: 'तुला', Scorpio: 'वृश्चिक', Sagittarius: 'धनु', Capricorn: 'मकर', Aquarius: 'कुम्भ', Pisces: 'मीन' },
-      shareText: (sign) => `मेरी ऑनचेन जन्म राशि ${sign} है ✦ अपनी खोजें 0xfuture.xyz पर #0xFUTURE #Base`,
+      shareText: (sign, chainKey) => `मेरी ऑनचेन जन्म राशि ${sign} है ✦ अपनी खोजें #0xFUTURE ${chainKey === 'base' ? '#Base' : '#Soneium'}`,
     },
     tarot: {
       description: 'आपका वॉलेट और आज की ऊर्जा आपके पत्ते चुनती है। आधी रात को एक नया पाठ इंतजार करता है...',
@@ -536,7 +538,7 @@ export const TRANSLATIONS: Record<LangCode, T> = {
       howItWorks: 'प्रत्येक दिन पूरे 78 पत्तों के राइडर वेट डेक से 3 पत्ते निकाले जाते हैं। चयन आपके वॉलेट पते के साथ आज की तारीख के संयोजन से अनोखे रूप से तय होता है जो आपके पाठ को आपके लिए व्यक्तिगत बनाता है। पत्ते UTC आधी रात को रीसेट होते हैं जो हर नए दिन की ऊर्जा को दर्शाते हैं। तीन स्थितियाँ आपके अतीत वर्तमान और भविष्य को प्रकट करती हैं।',
       history: 'टैरो पत्ते 15वीं शताब्दी के उत्तरी इटली में खेल के पत्तों के रूप में उत्पन्न हुए। 18वीं शताब्दी तक फ्रांसीसी रहस्यवादियों ने उन्हें भविष्यवाणी के लिए उपयोग करना शुरू किया। 1909 में पमेला कोलमैन स्मिथ द्वारा सचित्र प्रतिष्ठित राइडर वेट डेक विश्व मानक बन गया और यहाँ उपयोग किया जाने वाला डेक है। आज टैरो दुनिया भर में लाखों लोगों द्वारा प्रतिबिंब अंतर्ज्ञान और आत्म खोज के साधन के रूप में प्रचलित है।',
       positions: ['अतीत', 'वर्तमान', 'भविष्य'],
-      shareText: (cards) => `आज मेरा ऑनचेन टैरो पाठ: ${cards} ✦ अपना प्राप्त करें 0xfuture.xyz पर #0xFUTURE #Base`,
+      shareText: (cards, chainKey) => `आज मेरा ऑनचेन टैरो पाठ: ${cards} ✦ अपना प्राप्त करें #0xFUTURE ${chainKey === 'base' ? '#Base' : '#Soneium'}`,
     },
   },
 
@@ -545,7 +547,7 @@ export const TRANSLATIONS: Record<LangCode, T> = {
     common: {
       howDoesThisWork: 'یہ کیسے کام کرتا ہے؟',
       history: '✦ تاریخ',
-      shareOnFarcaster: 'Farcaster پر شیئر کریں',
+      shareOnX: 'X پر شیئر کریں',
       tryAgain: 'دوبارہ کوشش کریں',
       entertainment: 'قرأتیں صرف تفریحی مقاصد کے لیے ہیں۔',
       oracleReading: 'پیشین گوئی',
@@ -564,7 +566,7 @@ export const TRANSLATIONS: Record<LangCode, T> = {
       history: 'عددیات 2500 سے زیادہ سال پہلے قدیم بابل اور مصر سے شروع ہوئی۔ یونانی ریاضی دان فیثا غورث نے تقریباً 500 قبل مسیح میں اسے باقاعدہ شکل دی یہ یقین رکھتے ہوئے کہ اعداد تمام وجود کی بنیاد ہیں۔ کبالا سے لے کر نشاۃ ثانیہ کے علماء تک عددیات کو شخصیت مقدر اور کائناتی مقصد کو سمجھنے کے لیے استعمال کیا گیا ہے۔ آج آپ کا والیٹ پتہ آن چین کائنات میں آپ کی عددی شناخت بن جاتا ہے۔',
       resultTitle: 'زندگی کا راستہ نمبر',
       derivedFrom: 'سے ماخوذ',
-      shareText: (num) => `میں نے ابھی دریافت کیا کہ میرا آن چین لائف پاتھ نمبر ${num} ہے ✦ اپنا تلاش کریں 0xfuture.xyz پر #0xFUTURE #Base`,
+      shareText: (num, chainKey) => `میں نے ابھی دریافت کیا کہ میرا آن چین لائف پاتھ نمبر ${num} ہے ✦ اپنا تلاش کریں #0xFUTURE ${chainKey === 'base' ? '#Base' : '#Soneium'}`,
       readAgain: 'دوبارہ پڑھیں',
     },
     astrology: {
@@ -577,7 +579,7 @@ export const TRANSLATIONS: Record<LangCode, T> = {
       firstTx: 'پہلا TX:',
       birthSign: 'آن چین پیدائشی نشان',
       zodiacSigns: { Aries: 'حمل', Taurus: 'ثور', Gemini: 'جوزا', Cancer: 'سرطان', Leo: 'اسد', Virgo: 'سنبلہ', Libra: 'میزان', Scorpio: 'عقرب', Sagittarius: 'قوس', Capricorn: 'جدی', Aquarius: 'دلو', Pisces: 'حوت' },
-      shareText: (sign) => `میری آن چین پیدائشی علامت ${sign} ہے ✦ اپنی دریافت کریں 0xfuture.xyz پر #0xFUTURE #Base`,
+      shareText: (sign, chainKey) => `میری آن چین پیدائشی علامت ${sign} ہے ✦ اپنی دریافت کریں #0xFUTURE ${chainKey === 'base' ? '#Base' : '#Soneium'}`,
     },
     tarot: {
       description: 'آپ کا والیٹ اور آج کی توانائی آپ کے پتے منتخب کرتی ہے۔ آدھی رات کو ایک نئی قرأت منتظر ہے...',
@@ -586,7 +588,7 @@ export const TRANSLATIONS: Record<LangCode, T> = {
       howItWorks: 'ہر روز مکمل 78 پتوں کے رائیڈر ویٹ ڈیک سے 3 پتے نکالے جاتے ہیں۔ انتخاب آج کی تاریخ کے ساتھ آپ کے والیٹ پتے کے امتزاج سے منفرد طور پر طے ہوتا ہے جو آپ کی قرأت کو آپ کے لیے ذاتی بناتا ہے۔ پتے UTC آدھی رات کو ری سیٹ ہوتے ہیں ہر نئے دن کی توانائی کی عکاسی کرتے ہیں۔ تین مقامات آپ کے ماضی حال اور مستقبل کو ظاہر کرتے ہیں۔',
       history: 'ٹیرو پتے 15ویں صدی میں شمالی اٹلی میں کھیل کے پتوں کے طور پر پیدا ہوئے۔ 18ویں صدی تک فرانسیسی اوکلٹسٹوں نے انہیں پیشگوئی کے لیے استعمال کرنا شروع کیا۔ 1909 میں پمیلا کولمین اسمتھ کی طرف سے مصور مشہور رائیڈر ویٹ ڈیک عالمی معیار بن گیا اور یہی وہ ڈیک ہے جو یہاں استعمال ہوتا ہے۔ آج ٹیرو دنیا بھر میں لاکھوں لوگ غور و فکر وجدان اور خود دریافت کے آلے کے طور پر استعمال کرتے ہیں۔',
       positions: ['ماضی', 'حال', 'مستقبل'],
-      shareText: (cards) => `آج میری آن چین ٹیرو قرأت: ${cards} ✦ اپنا حاصل کریں 0xfuture.xyz پر #0xFUTURE #Base`,
+      shareText: (cards, chainKey) => `آج میری آن چین ٹیرو قرأت: ${cards} ✦ اپنا حاصل کریں #0xFUTURE ${chainKey === 'base' ? '#Base' : '#Soneium'}`,
     },
   },
 
@@ -595,7 +597,7 @@ export const TRANSLATIONS: Record<LangCode, T> = {
     common: {
       howDoesThisWork: 'Báwo ni èyí ṣe ń ṣiṣẹ?',
       history: '✦ Ìtàn',
-      shareOnFarcaster: 'Pín lori Farcaster',
+      shareOnX: 'Pín lori X',
       tryAgain: 'Gbìyànjú Lẹ́ẹ̀kan Sí',
       entertainment: 'Àwọn kíkà jẹ́ fún ìdárayá nìkan.',
       oracleReading: 'Kíkà Ọ̀rọ̀ Àwídìí',
@@ -614,7 +616,7 @@ export const TRANSLATIONS: Record<LangCode, T> = {
       history: 'Numerology ń ṣàpèjúwe ìgbà tó ju 2500 ọdún sẹ́yìn ní Bábílónì àtijọ́ àti Íjíbítì. Pythagoras onímọ̀ ìṣirò Gírìíkì ṣe àkójọpọ̀ rẹ ní nǹkan bí 500 BC ó gbàgbọ́ pé àwọn nọ́mbà jẹ́ ìpilẹ̀ gbogbo ìwàláàyè. Láti Kabbalah sí àwọn ọ̀mọ̀wé Renaissance a ti ń lò numerology láti tú àwa ènìyàn ayanmọ́ àti èrò àgbálá. Lónìí àdírẹ́sì wọ́lẹ́ọ̀tì rẹ di ìdánimọ̀ nọ́mbà rẹ nínú àgbáálá onchain.',
       resultTitle: 'Nọ́mbà Ọ̀nà Ìgbésí Ayé',
       derivedFrom: 'Gba jáde láti',
-      shareText: (num) => `Mo ṣẹ̀ṣẹ̀ ṣàwárí pé Nọ́mbà Ọ̀nà Ìgbésí Ayé Onchain mi jẹ́ ${num} ✦ Wá tirẹ ni 0xfuture.xyz #0xFUTURE #Base`,
+      shareText: (num, chainKey) => `Mo ṣẹ̀ṣẹ̀ ṣàwárí pé Nọ́mbà Ọ̀nà Ìgbésí Ayé Onchain mi jẹ́ ${num} ✦ Wá tirẹ #0xFUTURE ${chainKey === 'base' ? '#Base' : '#Soneium'}`,
       readAgain: 'Ka Lẹ́ẹ̀kan Sí',
     },
     astrology: {
@@ -627,7 +629,7 @@ export const TRANSLATIONS: Record<LangCode, T> = {
       firstTx: 'TX Àkọ́kọ́:',
       birthSign: 'Àmì Ìbí Onchain',
       zodiacSigns: { Aries: 'Àgùntàn', Taurus: 'Màlúù', Gemini: 'Ìbejì', Cancer: 'Àkàn', Leo: 'Kìnnìún', Virgo: 'Wúnndíá', Libra: 'Ìwọ̀n', Scorpio: 'Àkékè', Sagittarius: 'Ọlọ́dẹ', Capricorn: 'Ewúrẹ́', Aquarius: 'Olùgbébomi', Pisces: 'Ẹja' },
-      shareText: (sign) => `Àmì ìbí onchain mi jẹ́ ${sign} ✦ Ṣàwárí tirẹ ni 0xfuture.xyz #0xFUTURE #Base`,
+      shareText: (sign, chainKey) => `Àmì ìbí onchain mi jẹ́ ${sign} ✦ Ṣàwárí tirẹ #0xFUTURE ${chainKey === 'base' ? '#Base' : '#Soneium'}`,
     },
     tarot: {
       description: 'Wọ́lẹ́ọ̀tì rẹ àti agbára òní yan káàdì rẹ. Kíkà tuntun ndúró de rẹ ní aago àárọ̀...',
@@ -636,7 +638,7 @@ export const TRANSLATIONS: Record<LangCode, T> = {
       howItWorks: "Lójoojúmọ́ a máa ń fa káàdì 3 jáde nínú kọ́nù Rider Waite tó ní káàdì 78 nínú. Ìyàn náà jẹ́ ìpínlẹ̀ àkànṣe nípa àdírẹ́sì wọ́lẹ́ọ̀tì rẹ tí a dàpọ̀ mọ́ ọjọ́ òde òní ó ń mú kíkà rẹ jẹ́ ti ara rẹ. Àwọn káàdì máa ń tún bẹ̀rẹ̀ ní aago àárọ̀ UTC ó ń ṣàfihàn agbára ọjọ́ tuntun kọ̀ọ̀kan. Ipò mẹ́ta náà ṣàfihàn Àkókò tẹlẹ Lónìí àti Ọjọ́ iwájú rẹ.",
       history: 'Àwọn káàdì Tarot wáyé ní ọ̀rúndún kẹẹ̀ẹ́dógún ní Ìhà Àríwá Ítálì gẹ́gẹ́ bí káàdì eré. Ní ọ̀rúndún kejidilogun àwọn occultist Faransé bẹ̀rẹ̀ sí í lò wọn fún díẹ̀díẹ̀. Kọ́nù Rider Waite olókìkí tí Pamela Colman Smith ṣàfihàn ní 1909 di ìpele àgbáyé àti kọ́nù tí a ń lò níbí. Lónìí ẹgbẹẹgbẹ̀rún ènìyàn káàkiri àgbáyé máa ń ṣe tarot gẹ́gẹ́ bí ohun èlò fún ìrònú ìmọ̀lára àti ìṣàwárí ara ẹni.',
       positions: ['Àkókò tẹlẹ', 'Lónìí', 'Ọjọ́ iwájú'],
-      shareText: (cards) => `Kíkà tarot onchain mi fún òní: ${cards} ✦ Gba tirẹ ni 0xfuture.xyz #0xFUTURE #Base`,
+      shareText: (cards, chainKey) => `Kíkà tarot onchain mi fún òní: ${cards} ✦ Gba tirẹ #0xFUTURE ${chainKey === 'base' ? '#Base' : '#Soneium'}`,
     },
   },
 

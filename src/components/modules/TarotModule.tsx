@@ -207,7 +207,7 @@ export function TarotModule() {
             </p>
           </ReadingCard>
 
-          <ShareButton text={t.tarot.shareText(result.cards.map(c => c.name).join(' · '))} />
+          <ShareButton text={t.tarot.shareText(result.cards.map(c => c.name).join(' · '), selectedChainKey)} chainKey={selectedChainKey} />
         </div>
       )}
     </div>

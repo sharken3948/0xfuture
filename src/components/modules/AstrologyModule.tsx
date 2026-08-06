@@ -158,7 +158,7 @@ export function AstrologyModule() {
             </p>
           </ReadingCard>
 
-          <ShareButton text={t.astrology.shareText(t.astrology.zodiacSigns[result.zodiacSign] ?? result.zodiacSign)} />
+          <ShareButton text={t.astrology.shareText(t.astrology.zodiacSigns[result.zodiacSign] ?? result.zodiacSign, selectedChainKey)} chainKey={selectedChainKey} />
         </div>
       )}
     </div>
