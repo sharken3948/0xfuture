@@ -28,6 +28,7 @@ export const metadata: Metadata = {
     images: ['/og.png'],
   },
   other: {
+    'base:app_id': '6a743ab78a17821123df757c',
     'fc:frame': JSON.stringify({
       version: 'next',
       imageUrl: 'https://www.0xfuture.xyz/og.png',
