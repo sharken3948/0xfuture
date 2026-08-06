@@ -1,6 +1,8 @@
 'use client';
 
-import { createPublicClient, http, parseAbi, type WalletClient } from 'viem';
+import { concat, createPublicClient, encodeFunctionData, http, parseAbi, type WalletClient } from 'viem';
+import { base } from 'wagmi/chains';
+import { Attribution } from 'ox/erc8021';
 import { CHAIN_CONFIGS } from './constants';
 import type { ChainKey, PaymentResult } from '@/types';
 
@@ -9,6 +11,8 @@ const USDC_ABI = parseAbi([
   'function balanceOf(address owner) view returns (uint256)',
   'function decimals() view returns (uint8)',
 ]);
+
+const DATA_SUFFIX = Attribution.toDataSuffix({ codes: ['bc_tbuej0km'] });
 
 // NODE_ENV is inlined at build time by Next.js, so the entire dev-mode
 // branch is dead-code-eliminated in production bundles.
@@ -59,14 +63,31 @@ export async function sendUSDC(
     );
   }
 
-  const txHash = await walletClient.writeContract({
-    address: cfg.usdcAddress,
-    abi: USDC_ABI,
-    functionName: 'transfer',
-    args: [toAddress, amount],
-    account,
-    chain: cfg.chain,
-  });
+  let txHash: `0x${string}`;
+  if (cfg.chain.id === base.id) {
+    const data = encodeFunctionData({
+      abi: USDC_ABI,
+      functionName: 'transfer',
+      args: [toAddress, amount],
+    });
+    const dataWithSuffix = concat([data, DATA_SUFFIX]);
+
+    txHash = await walletClient.sendTransaction({
+      account,
+      chain: cfg.chain,
+      to: cfg.usdcAddress,
+      data: dataWithSuffix,
+    });
+  } else {
+    txHash = await walletClient.writeContract({
+      address: cfg.usdcAddress,
+      abi: USDC_ABI,
+      functionName: 'transfer',
+      args: [toAddress, amount],
+      account,
+      chain: cfg.chain,
+    });
+  }
 
   await publicClient.waitForTransactionReceipt({ hash: txHash, confirmations: 1 });
   return { txHash, success: true };

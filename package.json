@@ -17,6 +17,7 @@
     "@walletconnect/ethereum-provider": "^2.23.10",
     "groq-sdk": "^1.2.1",
     "next": "16.2.7",
+    "ox": "^1.6.1",
     "react": "19.2.4",
     "react-dom": "19.2.4",
     "viem": "^2.52.2",
