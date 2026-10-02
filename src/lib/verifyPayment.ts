@@ -25,16 +25,14 @@ export function isOwnerServer(address: string): boolean {
   return OWNERS.has(address.toLowerCase());
 }
 
-const RECEIPT_RETRIES = 3;
-const RECEIPT_RETRY_DELAY_MS = 1500;
+const RECEIPT_RETRIES = 6;
+const RECEIPT_RETRY_DELAY_MS = 2000;
 const RECENT_WINDOW_MS = 60 * 60 * 1000;
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
 function reject(reason: string): false {
-  if (process.env.NODE_ENV !== 'production') {
-    console.warn(`[verifyPayment] reject: ${reason}`);
-  }
+  console.warn(`[verifyPayment] reject: ${reason}`);
   return false;
 }
 

@@ -88,6 +88,18 @@ export async function sendUSDC(
     });
   }
 
-  await publicClient.waitForTransactionReceipt({ hash: txHash, confirmations: 1 });
+  try {
+    await publicClient.waitForTransactionReceipt({
+      hash: txHash,
+      confirmations: 1,
+      timeout: 30_000,
+    });
+  } catch (err) {
+    const name = (err as { name?: string } | null)?.name ?? '';
+    if (/WaitForTransactionReceiptTimeout/.test(name)) {
+      throw new Error('Transaction confirmation timed out. Please try again.');
+    }
+    throw err;
+  }
   return { txHash, success: true };
 }

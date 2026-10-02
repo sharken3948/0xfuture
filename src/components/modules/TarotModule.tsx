@@ -24,6 +24,7 @@ export function TarotModule() {
   const [result, setResult] = useState<TarotResult | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [flippedCount, setFlippedCount] = useState(0);
+  const [paidTxHash, setPaidTxHash] = useState<string | null>(null);
 
   useEffect(() => {
     if (!result) {
@@ -37,6 +38,12 @@ export function TarotModule() {
     ];
     return () => timers.forEach(clearTimeout);
   }, [result]);
+
+  // A paid txHash is bound to (wallet, chain); drop it if either changes.
+  useEffect(() => {
+    setPaidTxHash(null);
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- reset on identity change
+  }, [walletAddress, selectedChainKey]);
 
   const treasury = process.env.NEXT_PUBLIC_TREASURY_ADDRESS;
 
@@ -53,50 +60,74 @@ export function TarotModule() {
 
     setError(null);
 
-    let txHash: string;
-    if (isWhitelisted(addr)) {
-      txHash = '0xWHITELIST';
-    } else if (isDevMode) {
-      setState('paying');
-      await new Promise((r) => setTimeout(r, 800));
-      txHash = '0xDEV_SIMULATED';
-    } else {
-      setState('paying');
-      try {
-        const walletClient = await getWalletClient();
-        const payment = await sendUSDC(
-          treasury as `0x${string}`,
-          selectedChainKey,
-          walletClient,
-          READING_PRICES_CENTS.tarot,
-        );
-        txHash = payment.txHash;
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'Payment failed');
-        setState('error');
-        return;
+    let txHash = paidTxHash;
+    if (!txHash) {
+      if (isWhitelisted(addr)) {
+        txHash = '0xWHITELIST';
+      } else if (isDevMode) {
+        setState('paying');
+        await new Promise((r) => setTimeout(r, 800));
+        txHash = '0xDEV_SIMULATED';
+      } else {
+        setState('paying');
+        try {
+          const walletClient = await getWalletClient();
+          const payment = await sendUSDC(
+            treasury as `0x${string}`,
+            selectedChainKey,
+            walletClient,
+            READING_PRICES_CENTS.tarot,
+          );
+          txHash = payment.txHash;
+        } catch (err) {
+          setError(err instanceof Error ? err.message : 'Payment failed');
+          setState('error');
+          return;
+        }
       }
+      setPaidTxHash(txHash);
     }
 
     setState('loading');
 
-    try {
-      const res = await fetch('/api/tarot', {
+    const callApi = async () =>
+      fetch('/api/tarot', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ address: addr, txHash, language, chainKey: selectedChainKey }),
       });
+
+    try {
       let data: { error?: string } & Partial<TarotResult> = {};
-      try {
-        data = await res.json();
-      } catch {
-        // non-JSON response — fall through to generic error
+      let lastStatus = 0;
+      for (let attempt = 0; attempt < 3; attempt++) {
+        const res = await callApi();
+        lastStatus = res.status;
+        data = {};
+        try {
+          data = await res.json();
+        } catch {
+          // non-JSON response — fall through
+        }
+        if (res.ok && Array.isArray(data.cards)) {
+          setResult(data as TarotResult);
+          setPaidTxHash(null);
+          setState('done');
+          return;
+        }
+        if (res.status === 402 && attempt < 2) {
+          await new Promise((r) => setTimeout(r, 3000));
+          continue;
+        }
+        break;
       }
-      if (!res.ok || !Array.isArray(data.cards)) {
-        throw new Error(typeof data.error === 'string' ? data.error : 'Reading failed');
-      }
-      setResult(data as TarotResult);
-      setState('done');
+      throw new Error(
+        typeof data.error === 'string'
+          ? data.error
+          : lastStatus === 402
+            ? 'Payment not confirmed yet. Please try again in a moment.'
+            : 'Reading failed',
+      );
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Reading failed');
       setState('error');

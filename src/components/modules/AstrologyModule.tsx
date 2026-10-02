@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useMiniKit } from '@/components/providers/MiniKitProvider';
 import { sendUSDC, isDevMode, isWhitelisted } from '@/lib/payment';
 import { READING_PRICES_CENTS } from '@/lib/constants';
@@ -26,6 +26,14 @@ export function AstrologyModule() {
   const [state, setState] = useState<ReadingState>('idle');
   const [result, setResult] = useState<AstrologyResult | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [paidTxHash, setPaidTxHash] = useState<string | null>(null);
+
+  // A paid txHash is bound to (wallet, chain); drop it if either changes so
+  // we never submit a stale payment to the API.
+  useEffect(() => {
+    setPaidTxHash(null);
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- reset on identity change
+  }, [walletAddress, selectedChainKey]);
 
   const treasury = process.env.NEXT_PUBLIC_TREASURY_ADDRESS;
 
@@ -42,50 +50,74 @@ export function AstrologyModule() {
 
     setError(null);
 
-    let txHash: string;
-    if (isWhitelisted(addr)) {
-      txHash = '0xWHITELIST';
-    } else if (isDevMode) {
-      setState('paying');
-      await new Promise((r) => setTimeout(r, 800));
-      txHash = '0xDEV_SIMULATED';
-    } else {
-      setState('paying');
-      try {
-        const walletClient = await getWalletClient();
-        const payment = await sendUSDC(
-          treasury as `0x${string}`,
-          selectedChainKey,
-          walletClient,
-          READING_PRICES_CENTS.astrology,
-        );
-        txHash = payment.txHash;
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'Payment failed');
-        setState('error');
-        return;
+    let txHash = paidTxHash;
+    if (!txHash) {
+      if (isWhitelisted(addr)) {
+        txHash = '0xWHITELIST';
+      } else if (isDevMode) {
+        setState('paying');
+        await new Promise((r) => setTimeout(r, 800));
+        txHash = '0xDEV_SIMULATED';
+      } else {
+        setState('paying');
+        try {
+          const walletClient = await getWalletClient();
+          const payment = await sendUSDC(
+            treasury as `0x${string}`,
+            selectedChainKey,
+            walletClient,
+            READING_PRICES_CENTS.astrology,
+          );
+          txHash = payment.txHash;
+        } catch (err) {
+          setError(err instanceof Error ? err.message : 'Payment failed');
+          setState('error');
+          return;
+        }
       }
+      setPaidTxHash(txHash);
     }
 
     setState('loading');
 
-    try {
-      const res = await fetch('/api/astrology', {
+    const callApi = async () =>
+      fetch('/api/astrology', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ address: addr, txHash, language, chainKey: selectedChainKey }),
       });
+
+    try {
       let data: { error?: string } & Partial<AstrologyResult> = {};
-      try {
-        data = await res.json();
-      } catch {
-        // non-JSON response — fall through to generic error
+      let lastStatus = 0;
+      for (let attempt = 0; attempt < 3; attempt++) {
+        const res = await callApi();
+        lastStatus = res.status;
+        data = {};
+        try {
+          data = await res.json();
+        } catch {
+          // non-JSON response — fall through
+        }
+        if (res.ok && typeof data.zodiacSign === 'string') {
+          setResult(data as AstrologyResult);
+          setPaidTxHash(null);
+          setState('done');
+          return;
+        }
+        if (res.status === 402 && attempt < 2) {
+          await new Promise((r) => setTimeout(r, 3000));
+          continue;
+        }
+        break;
       }
-      if (!res.ok || typeof data.zodiacSign !== 'string') {
-        throw new Error(typeof data.error === 'string' ? data.error : 'Reading failed');
-      }
-      setResult(data as AstrologyResult);
-      setState('done');
+      throw new Error(
+        typeof data.error === 'string'
+          ? data.error
+          : lastStatus === 402
+            ? 'Payment not confirmed yet. Please try again in a moment.'
+            : 'Reading failed',
+      );
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Reading failed');
       setState('error');

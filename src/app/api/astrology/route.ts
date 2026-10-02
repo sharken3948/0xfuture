@@ -15,6 +15,8 @@ import {
 import { GROQ_LANG_NAMES, type LangCode } from '@/lib/translations';
 import { isOwnerServer, verifyPayment } from '@/lib/verifyPayment';
 
+export const maxDuration = 30;
+
 export async function POST(req: NextRequest) {
   try {
     const { address, txHash, language, chainKey } = await req.json();
