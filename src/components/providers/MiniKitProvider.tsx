@@ -41,6 +41,7 @@ export function useMiniKit() {
 
 function chainIdToKey(chainId: number | undefined): ChainKey {
   if (chainId === CHAIN_CONFIGS.soneium.chain.id) return 'soneium';
+  if (chainId === CHAIN_CONFIGS.arc.chain.id) return 'arc';
   return 'base';
 }
 

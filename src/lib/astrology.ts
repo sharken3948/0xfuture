@@ -1,5 +1,12 @@
+import {
+  createPublicClient,
+  getAddress,
+  parseAbiItem,
+  type Log,
+} from 'viem';
 import type { ChainKey, ZodiacSign } from '@/types';
 import { CHAIN_CONFIGS, ZODIAC_SIGNS } from './constants';
+import { chainTransport } from './rpc';
 
 export function dateToZodiac(date: Date): ZodiacSign {
   const month = date.getMonth() + 1;
@@ -43,7 +50,21 @@ export function pseudoDateFromAddress(address: string): Date {
   return new Date(year, month - 1, day);
 }
 
-export async function getFirstTransactionDate(
+const TRANSFER_EVENT = parseAbiItem(
+  'event Transfer(address indexed from, address indexed to, uint256 value)',
+);
+
+// Arc: 0.5s blocks; 30 days ≈ 5,184,000 blocks. 5k per getLogs call,
+// scanned forward in parallel batches with a wall-clock budget so we fall
+// back to the derived date rather than hang the request.
+const ARC_FIRST_TX_LOOKBACK_BLOCKS = 5_184_000n;
+const ARC_FIRST_TX_CHUNK_BLOCKS = 5_000n;
+const ARC_FIRST_TX_CONCURRENCY = 10;
+const ARC_FIRST_TX_BUDGET_MS = 8_000;
+
+type TransferLog = Log<bigint, number, false, typeof TRANSFER_EVENT, true>;
+
+async function firstTxBlockscout(
   address: string,
   chainKey: ChainKey,
 ): Promise<FirstTxDateResult> {
@@ -72,4 +93,78 @@ export async function getFirstTransactionDate(
   }
 
   return { date: pseudoDateFromAddress(address), source: 'derived' };
+}
+
+async function firstTxRpcLogs(
+  address: string,
+  chainKey: ChainKey,
+): Promise<FirstTxDateResult> {
+  const cfg = CHAIN_CONFIGS[chainKey];
+  const client = createPublicClient({ chain: cfg.chain, transport: chainTransport(chainKey) });
+  const user = getAddress(address);
+
+  let latest: bigint;
+  try {
+    latest = await client.getBlockNumber();
+  } catch {
+    return { date: pseudoDateFromAddress(address), source: 'derived' };
+  }
+  const earliest =
+    latest > ARC_FIRST_TX_LOOKBACK_BLOCKS ? latest - ARC_FIRST_TX_LOOKBACK_BLOCKS : 0n;
+
+  // Build forward-ordered ranges [earliest, …, latest].
+  const ranges: Array<[bigint, bigint]> = [];
+  for (let from = earliest; from <= latest; ) {
+    const to = from + ARC_FIRST_TX_CHUNK_BLOCKS - 1n < latest
+      ? from + ARC_FIRST_TX_CHUNK_BLOCKS - 1n
+      : latest;
+    ranges.push([from, to]);
+    if (to === latest) break;
+    from = to + 1n;
+  }
+
+  const deadline = Date.now() + ARC_FIRST_TX_BUDGET_MS;
+
+  for (let i = 0; i < ranges.length; i += ARC_FIRST_TX_CONCURRENCY) {
+    if (Date.now() >= deadline) break;
+    const batch = ranges.slice(i, i + ARC_FIRST_TX_CONCURRENCY);
+    const results = await Promise.allSettled(
+      batch.map(([from, to]) =>
+        client.getLogs({
+          address: cfg.usdcAddress,
+          event: TRANSFER_EVENT,
+          args: { to: user },
+          fromBlock: from,
+          toBlock: to,
+        }),
+      ),
+    );
+    // Walk forward through this batch to prefer the earliest hit.
+    for (const r of results) {
+      if (r.status !== 'fulfilled') continue;
+      const logs = r.value as TransferLog[];
+      if (logs.length === 0) continue;
+      let earliestLog = logs[0];
+      for (const l of logs) {
+        if (l.blockNumber < earliestLog.blockNumber) earliestLog = l;
+      }
+      try {
+        const block = await client.getBlock({ blockHash: earliestLog.blockHash });
+        return { date: new Date(Number(block.timestamp) * 1000), source: 'onchain' };
+      } catch {
+        // give up on this hit; keep scanning
+      }
+    }
+  }
+
+  return { date: pseudoDateFromAddress(address), source: 'derived' };
+}
+
+export async function getFirstTransactionDate(
+  address: string,
+  chainKey: ChainKey,
+): Promise<FirstTxDateResult> {
+  const cfg = CHAIN_CONFIGS[chainKey];
+  if (cfg.firstTxStrategy === 'rpc-logs') return firstTxRpcLogs(address, chainKey);
+  return firstTxBlockscout(address, chainKey);
 }

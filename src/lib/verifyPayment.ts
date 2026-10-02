@@ -1,5 +1,6 @@
-import { createPublicClient, http, parseAbi, parseEventLogs } from 'viem';
+import { createPublicClient, parseAbi, parseEventLogs } from 'viem';
 import { CHAIN_CONFIGS } from './constants';
+import { chainTransport } from './rpc';
 import type { ChainKey } from '@/types';
 
 const USDC_EVENT_ABI = parseAbi([
@@ -51,7 +52,7 @@ export async function verifyPayment(params: {
   if (!treasury || !/^0x[0-9a-f]{40}$/.test(treasury)) return reject('treasury_missing');
 
   const cfg = CHAIN_CONFIGS[chainKey];
-  const publicClient = createPublicClient({ chain: cfg.chain, transport: http() });
+  const publicClient = createPublicClient({ chain: cfg.chain, transport: chainTransport(chainKey) });
 
   const hash = txHash as `0x${string}`;
   let receipt: Awaited<ReturnType<typeof publicClient.getTransactionReceipt>> | null = null;

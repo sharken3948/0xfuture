@@ -56,9 +56,18 @@ export async function sendUSDC(
     functionName: 'balanceOf',
     args: [account],
   });
-  if (balance < amount) {
+  // Arc pays gas in USDC, so require a small headroom on top of the price.
+  const required = amount + cfg.gasHeadroom;
+  if (balance < required) {
+    const price = (usdCents / 100).toFixed(2);
+    if (cfg.gasHeadroom > 0n) {
+      const headroom = (Number(cfg.gasHeadroom) / 1e6).toFixed(2);
+      throw new Error(
+        `Insufficient ${cfg.usdcSymbol} on ${cfg.label}. Need $${price} plus ~$${headroom} gas.`,
+      );
+    }
     throw new Error(
-      `Insufficient ${cfg.usdcSymbol} on ${cfg.label}. Need $${(usdCents / 100).toFixed(2)}.`,
+      `Insufficient ${cfg.usdcSymbol} on ${cfg.label}. Need $${price}.`,
     );
   }
 

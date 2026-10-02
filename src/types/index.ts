@@ -51,4 +51,4 @@ export interface PaymentResult {
 
 export type ReadingState = 'idle' | 'paying' | 'loading' | 'done' | 'error';
 
-export type ChainKey = 'base' | 'soneium';
+export type ChainKey = 'base' | 'soneium' | 'arc';

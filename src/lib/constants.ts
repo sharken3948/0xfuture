@@ -1,6 +1,9 @@
 import type { Chain } from 'viem';
-import { base, soneium } from 'viem/chains';
+import { defineChain } from 'viem';
+import { base, soneium, arc as arcBase } from 'viem/chains';
 import type { ChainKey, TarotCard, ZodiacSign } from '@/types';
+
+export type HistoryStrategy = 'blockscout' | 'rpc-logs';
 
 export interface ChainConfig {
   key: ChainKey;
@@ -8,10 +11,28 @@ export interface ChainConfig {
   chain: Chain;
   usdcAddress: `0x${string}`;
   usdcSymbol: string;
+  rpcUrls: readonly string[];
   explorerApi: string;
+  firstTxStrategy: HistoryStrategy;
+  paidTodayStrategy: HistoryStrategy;
+  // USDC amount (6 decimals) reserved on top of the reading price for gas.
+  // Only non-zero on chains where USDC pays for gas (Arc).
+  gasHeadroom: bigint;
   iconUrl: string;
   iconBackground: string;
 }
+
+// Circle's Arc Mainnet. viem exports `arc` but leaves rpcUrls empty and
+// omits block explorers, so we wrap it with the public endpoints here.
+const arc = defineChain({
+  ...arcBase,
+  rpcUrls: {
+    default: { http: ['https://rpc.mainnet.arc.io'] },
+  },
+  blockExplorers: {
+    default: { name: 'Arc Explorer', url: 'https://explorer.arc.io' },
+  },
+});
 
 // Soneium: Circle has not deployed native USDC. Address below is
 // bridged USDC.e per Soneium's official contract list.
@@ -22,7 +43,11 @@ export const CHAIN_CONFIGS: Record<ChainKey, ChainConfig> = {
     chain: base,
     usdcAddress: '0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913',
     usdcSymbol: 'USDC',
+    rpcUrls: ['https://mainnet.base.org', 'https://base.llamarpc.com'],
     explorerApi: 'https://base.blockscout.com/api',
+    firstTxStrategy: 'blockscout',
+    paidTodayStrategy: 'blockscout',
+    gasHeadroom: 0n,
     iconUrl: '/base.png',
     iconBackground: '#0052FF',
   },
@@ -32,18 +57,45 @@ export const CHAIN_CONFIGS: Record<ChainKey, ChainConfig> = {
     chain: soneium,
     usdcAddress: '0xbA9986D2381edf1DA03B0B9c1f8b00dc4AacC369',
     usdcSymbol: 'USDC.e',
+    rpcUrls: ['https://rpc.soneium.org'],
     explorerApi: 'https://soneium.blockscout.com/api',
+    firstTxStrategy: 'blockscout',
+    paidTodayStrategy: 'blockscout',
+    gasHeadroom: 0n,
     iconUrl: '/soneium.png',
+    iconBackground: '#000',
+  },
+  arc: {
+    key: 'arc',
+    label: 'Arc Mainnet',
+    chain: arc,
+    // Circle's ERC-20 USDC interface on Arc (6 decimals; native USDC is 18).
+    usdcAddress: '0x3600000000000000000000000000000000000000',
+    usdcSymbol: 'USDC',
+    rpcUrls: ['https://rpc.mainnet.arc.io'],
+    // Kept for symmetry; explorer-API strategies route around it via rpc-logs.
+    explorerApi: 'https://explorer.arc.io/api',
+    firstTxStrategy: 'rpc-logs',
+    paidTodayStrategy: 'rpc-logs',
+    // 0.10 USDC (6 decimals) — gas on Arc is paid in USDC.
+    gasHeadroom: 100_000n,
+    iconUrl: '/arc.png',
     iconBackground: '#000',
   },
 };
 
-export const CHAIN_KEYS: ChainKey[] = ['base', 'soneium'];
+export const CHAIN_KEYS: ChainKey[] = ['base', 'soneium', 'arc'];
 export const DEFAULT_CHAIN_KEY: ChainKey = 'base';
 
 export function isChainKey(v: unknown): v is ChainKey {
-  return v === 'base' || v === 'soneium';
+  return v === 'base' || v === 'soneium' || v === 'arc';
 }
+
+export const CHAIN_HASHTAG: Record<ChainKey, string> = {
+  base: '#Base',
+  soneium: '#Soneium',
+  arc: '#Arc',
+};
 
 // Prices in USD cents; runtime scales by token decimals().
 export const READING_PRICES_CENTS = {

@@ -23,6 +23,14 @@ const soneiumWithIcon = {
   iconBackground: CHAIN_CONFIGS.soneium.iconBackground,
 };
 
+// Uses the wrapped Arc from constants.ts (viem's base `arc` has empty rpcUrls).
+const arcWithIcon = {
+  ...CHAIN_CONFIGS.arc.chain,
+  name: CHAIN_CONFIGS.arc.label,
+  iconUrl: CHAIN_CONFIGS.arc.iconUrl,
+  iconBackground: CHAIN_CONFIGS.arc.iconBackground,
+};
+
 export function WagmiProvider({ children }: { children: React.ReactNode }) {
   const [queryClient] = useState(() => new QueryClient());
 
@@ -31,7 +39,7 @@ export function WagmiProvider({ children }: { children: React.ReactNode }) {
       getDefaultConfig({
         appName: '0xFUTURE',
         projectId: WC_PROJECT_ID,
-        chains: [baseWithIcon, soneiumWithIcon],
+        chains: [baseWithIcon, soneiumWithIcon, arcWithIcon],
         ssr: true,
       }),
     [],

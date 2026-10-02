@@ -35,7 +35,11 @@ export function WalletBar() {
         {({ account, chain, openAccountModal, mounted }) => {
           if (!mounted || !account || !chain) return null;
           const currentKey: ChainKey =
-            chain.id === CHAIN_CONFIGS.soneium.chain.id ? 'soneium' : 'base';
+            chain.id === CHAIN_CONFIGS.soneium.chain.id
+              ? 'soneium'
+              : chain.id === CHAIN_CONFIGS.arc.chain.id
+                ? 'arc'
+                : 'base';
           const currentCfg = CHAIN_CONFIGS[currentKey];
 
           return (
@@ -88,20 +92,6 @@ export function WalletBar() {
                         </button>
                       );
                     })}
-                    <div
-                      aria-disabled
-                      className="w-full flex items-center gap-2 lg:gap-3 px-2 py-1.5 lg:px-3 lg:py-2.5 rounded-lg lg:rounded-xl text-[11px] lg:text-[14px] text-violet-400/40 select-none cursor-not-allowed"
-                    >
-                      <img
-                        src="/arc.png"
-                        alt=""
-                        className="w-4 h-4 lg:w-6 lg:h-6 rounded-full grayscale opacity-50"
-                      />
-                      <span className="flex-1 text-left">Arc Mainnet</span>
-                      <span className="text-[9px] lg:text-[11px] tracking-widest uppercase text-emerald-400/60">
-                        soon
-                      </span>
-                    </div>
                   </div>
                 )}
               </div>
