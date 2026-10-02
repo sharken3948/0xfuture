@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useMiniKit } from '@/components/providers/MiniKitProvider';
 import { sendUSDC, isDevMode, isWhitelisted } from '@/lib/payment';
+import { readPaidTxHash, writePaidTxHash, clearPaidTxHash } from '@/lib/paymentStorage';
 import { READING_PRICES_CENTS, TAROT_IMAGES } from '@/lib/constants';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 import { ReadingCard } from '@/components/ui/ReadingCard';
@@ -39,10 +40,12 @@ export function TarotModule() {
     return () => timers.forEach(clearTimeout);
   }, [result]);
 
-  // A paid txHash is bound to (wallet, chain); drop it if either changes.
+  // A paid txHash is bound to (wallet, chain); rehydrate from sessionStorage
+  // on mount or identity change so a page refresh never re-charges.
   useEffect(() => {
-    setPaidTxHash(null);
-    // eslint-disable-next-line react-hooks/set-state-in-effect -- reset on identity change
+    const stored = readPaidTxHash('tarot', walletAddress, selectedChainKey);
+    setPaidTxHash(stored);
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- hydration-safe: sessionStorage must not be read during SSR
   }, [walletAddress, selectedChainKey]);
 
   const treasury = process.env.NEXT_PUBLIC_TREASURY_ADDRESS;
@@ -79,6 +82,7 @@ export function TarotModule() {
             READING_PRICES_CENTS.tarot,
           );
           txHash = payment.txHash;
+          writePaidTxHash('tarot', addr, selectedChainKey, txHash);
         } catch (err) {
           setError(err instanceof Error ? err.message : 'Payment failed');
           setState('error');
@@ -97,12 +101,13 @@ export function TarotModule() {
         body: JSON.stringify({ address: addr, txHash, language, chainKey: selectedChainKey }),
       });
 
+    const RETRY_FAILED_MSG =
+      'Payment received, but the reading failed. Please try again, you will not be charged twice.';
+
     try {
       let data: { error?: string } & Partial<TarotResult> = {};
-      let lastStatus = 0;
       for (let attempt = 0; attempt < 3; attempt++) {
         const res = await callApi();
-        lastStatus = res.status;
         data = {};
         try {
           data = await res.json();
@@ -111,6 +116,7 @@ export function TarotModule() {
         }
         if (res.ok && Array.isArray(data.cards)) {
           setResult(data as TarotResult);
+          clearPaidTxHash('tarot', addr, selectedChainKey);
           setPaidTxHash(null);
           setState('done');
           return;
@@ -121,15 +127,9 @@ export function TarotModule() {
         }
         break;
       }
-      throw new Error(
-        typeof data.error === 'string'
-          ? data.error
-          : lastStatus === 402
-            ? 'Payment not confirmed yet. Please try again in a moment.'
-            : 'Reading failed',
-      );
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Reading failed');
+      throw new Error(RETRY_FAILED_MSG);
+    } catch {
+      setError(RETRY_FAILED_MSG);
       setState('error');
     }
   };

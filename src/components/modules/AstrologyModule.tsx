@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useMiniKit } from '@/components/providers/MiniKitProvider';
 import { sendUSDC, isDevMode, isWhitelisted } from '@/lib/payment';
+import { readPaidTxHash, writePaidTxHash, clearPaidTxHash } from '@/lib/paymentStorage';
 import { READING_PRICES_CENTS } from '@/lib/constants';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 import { ReadingCard } from '@/components/ui/ReadingCard';
@@ -28,11 +29,12 @@ export function AstrologyModule() {
   const [error, setError] = useState<string | null>(null);
   const [paidTxHash, setPaidTxHash] = useState<string | null>(null);
 
-  // A paid txHash is bound to (wallet, chain); drop it if either changes so
-  // we never submit a stale payment to the API.
+  // A paid txHash is bound to (wallet, chain); rehydrate from sessionStorage
+  // on mount or identity change so a page refresh never re-charges.
   useEffect(() => {
-    setPaidTxHash(null);
-    // eslint-disable-next-line react-hooks/set-state-in-effect -- reset on identity change
+    const stored = readPaidTxHash('astrology', walletAddress, selectedChainKey);
+    setPaidTxHash(stored);
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- hydration-safe: sessionStorage must not be read during SSR
   }, [walletAddress, selectedChainKey]);
 
   const treasury = process.env.NEXT_PUBLIC_TREASURY_ADDRESS;
@@ -69,6 +71,7 @@ export function AstrologyModule() {
             READING_PRICES_CENTS.astrology,
           );
           txHash = payment.txHash;
+          writePaidTxHash('astrology', addr, selectedChainKey, txHash);
         } catch (err) {
           setError(err instanceof Error ? err.message : 'Payment failed');
           setState('error');
@@ -87,12 +90,13 @@ export function AstrologyModule() {
         body: JSON.stringify({ address: addr, txHash, language, chainKey: selectedChainKey }),
       });
 
+    const RETRY_FAILED_MSG =
+      'Payment received, but the reading failed. Please try again, you will not be charged twice.';
+
     try {
       let data: { error?: string } & Partial<AstrologyResult> = {};
-      let lastStatus = 0;
       for (let attempt = 0; attempt < 3; attempt++) {
         const res = await callApi();
-        lastStatus = res.status;
         data = {};
         try {
           data = await res.json();
@@ -101,6 +105,7 @@ export function AstrologyModule() {
         }
         if (res.ok && typeof data.zodiacSign === 'string') {
           setResult(data as AstrologyResult);
+          clearPaidTxHash('astrology', addr, selectedChainKey);
           setPaidTxHash(null);
           setState('done');
           return;
@@ -111,15 +116,9 @@ export function AstrologyModule() {
         }
         break;
       }
-      throw new Error(
-        typeof data.error === 'string'
-          ? data.error
-          : lastStatus === 402
-            ? 'Payment not confirmed yet. Please try again in a moment.'
-            : 'Reading failed',
-      );
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Reading failed');
+      throw new Error(RETRY_FAILED_MSG);
+    } catch {
+      setError(RETRY_FAILED_MSG);
       setState('error');
     }
   };
