@@ -22,7 +22,7 @@ export const CHAIN_CONFIGS: Record<ChainKey, ChainConfig> = {
     chain: base,
     usdcAddress: '0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913',
     usdcSymbol: 'USDC',
-    explorerApi: 'https://api.basescan.org/api',
+    explorerApi: 'https://base.blockscout.com/api',
     iconUrl: '/base.png',
     iconBackground: '#0052FF',
   },

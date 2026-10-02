@@ -1,5 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getFirstTransactionDate, dateToZodiac } from '@/lib/astrology';
+import {
+  getFirstTransactionDate,
+  dateToZodiac,
+  pseudoDateFromAddress,
+  type DateSource,
+} from '@/lib/astrology';
 import { generateReading } from '@/lib/groq';
 import {
   DEFAULT_CHAIN_KEY,
@@ -31,7 +36,17 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ error: 'Payment required' }, { status: 402 });
       }
     }
-    const firstTxDate = await getFirstTransactionDate(address, chain);
+    let firstTxDate: Date;
+    let dateSource: DateSource;
+    try {
+      const result = await getFirstTransactionDate(address, chain);
+      firstTxDate = result.date;
+      dateSource = result.source;
+    } catch {
+      console.error('[astrology] astrology_explorer_failed');
+      firstTxDate = pseudoDateFromAddress(address);
+      dateSource = 'derived';
+    }
     const zodiacSign = dateToZodiac(firstTxDate);
     const symbol = ZODIAC_SYMBOLS[zodiacSign];
     const shortAddr = `${address.slice(0, 6)}...${address.slice(-4)}`;
@@ -41,14 +56,14 @@ export async function POST(req: NextRequest) {
     try {
       const horoRes = await fetch(
         `https://freehoroscopeapi.com/api/v1/get-horoscope/daily?sign=${zodiacSign.toLowerCase()}`,
-        { next: { revalidate: 3600 } },
+        { signal: AbortSignal.timeout(5000), next: { revalidate: 3600 } },
       );
       if (horoRes.ok) {
         const horoData = await horoRes.json();
         dailyHoroscope = horoData?.horoscope ?? horoData?.data?.horoscope ?? null;
       }
     } catch {
-      // proceed without daily horoscope
+      console.error('[astrology] astrology_horoscope_failed');
     }
 
     const prompt = dailyHoroscope
@@ -58,7 +73,13 @@ Based on this real daily horoscope: '${dailyHoroscope}' - create a personalized 
 This birth date on the blockchain makes them a ${zodiacSign} ${symbol}.
 Give a personalized astrology reading for this onchain soul. Reference their ${zodiacSign} nature, how the stars have shaped their web3 journey, and what cosmic forces guide their transactions.`;
 
-    const raw = await generateReading(prompt, langName);
+    let raw: string;
+    try {
+      raw = await generateReading(prompt, langName);
+    } catch {
+      console.error('[astrology] astrology_groq_failed');
+      return NextResponse.json({ error: 'Reading failed' }, { status: 500 });
+    }
     const interpretation = raw.replace(new RegExp(address, 'gi'), shortAddr);
 
     return NextResponse.json({
@@ -66,11 +87,10 @@ Give a personalized astrology reading for this onchain soul. Reference their ${z
       zodiacSign,
       symbol,
       interpretation,
+      dateSource,
     });
   } catch {
-    if (process.env.NODE_ENV !== 'production') {
-      console.error('[astrology] handler error');
-    }
+    console.error('[astrology] astrology_handler_error');
     return NextResponse.json({ error: 'Reading failed' }, { status: 500 });
   }
 }

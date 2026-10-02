@@ -16,6 +16,7 @@ interface AstrologyResult {
   zodiacSign: string;
   symbol: string;
   interpretation: string;
+  dateSource: 'onchain' | 'derived';
 }
 
 export function AstrologyModule() {
@@ -164,6 +165,11 @@ export function AstrologyModule() {
               {result.interpretation}
             </p>
           </ReadingCard>
+          {result.dateSource === 'derived' && (
+            <p className="text-[11px] text-[#a78bfa]/70 text-center bg-[#1a0d2e]/60 border border-[#a78bfa]/15 rounded-lg px-3 py-2">
+              No onchain history found for this wallet, so this reading uses a derived date.
+            </p>
+          )}
 
           <ShareButton text={t.astrology.shareText(t.astrology.zodiacSigns[result.zodiacSign] ?? result.zodiacSign, selectedChainKey)} chainKey={selectedChainKey} />
         </div>

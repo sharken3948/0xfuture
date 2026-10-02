@@ -28,10 +28,25 @@ export function dateToZodiac(date: Date): ZodiacSign {
   return 'Capricorn';
 }
 
+export type DateSource = 'onchain' | 'derived';
+
+export interface FirstTxDateResult {
+  date: Date;
+  source: DateSource;
+}
+
+export function pseudoDateFromAddress(address: string): Date {
+  const hex = address.toLowerCase().replace(/^0x/, '');
+  const month = (parseInt(hex.slice(0, 2), 16) % 12) + 1;
+  const day = (parseInt(hex.slice(2, 4), 16) % 28) + 1;
+  const year = 2020 + (parseInt(hex.slice(4, 6), 16) % 4);
+  return new Date(year, month - 1, day);
+}
+
 export async function getFirstTransactionDate(
   address: string,
   chainKey: ChainKey,
-): Promise<Date> {
+): Promise<FirstTxDateResult> {
   const cfg = CHAIN_CONFIGS[chainKey];
   const url = new URL(cfg.explorerApi);
   url.searchParams.set('module', 'account');
@@ -43,23 +58,18 @@ export async function getFirstTransactionDate(
   url.searchParams.set('offset', '1');
   url.searchParams.set('sort', 'asc');
 
-  // Basescan requires an API key; Soneium Blockscout does not.
-  if (chainKey === 'base') {
-    const apiKey = process.env.BASESCAN_API_KEY;
-    if (apiKey) url.searchParams.set('apikey', apiKey);
-  }
-
-  const res = await fetch(url.toString(), { next: { revalidate: 3600 } });
+  const res = await fetch(url.toString(), {
+    signal: AbortSignal.timeout(5000),
+    next: { revalidate: 3600 },
+  });
   const data = await res.json();
 
   if (data.status === '1' && data.result?.length > 0) {
-    return new Date(parseInt(data.result[0].timeStamp) * 1000);
+    return {
+      date: new Date(parseInt(data.result[0].timeStamp) * 1000),
+      source: 'onchain',
+    };
   }
 
-  // Fallback: derive pseudo-date from address bytes
-  const hex = address.toLowerCase().replace(/^0x/, '');
-  const month = (parseInt(hex.slice(0, 2), 16) % 12) + 1;
-  const day = (parseInt(hex.slice(2, 4), 16) % 28) + 1;
-  const year = 2020 + (parseInt(hex.slice(4, 6), 16) % 4);
-  return new Date(year, month - 1, day);
+  return { date: pseudoDateFromAddress(address), source: 'derived' };
 }
