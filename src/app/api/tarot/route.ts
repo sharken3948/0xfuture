@@ -8,6 +8,7 @@ import {
 } from '@/lib/constants';
 import { GROQ_LANG_NAMES, type LangCode } from '@/lib/translations';
 import { isOwnerServer, verifyPayment } from '@/lib/verifyPayment';
+import { hasPaidToday } from '@/lib/paidToday';
 
 export const maxDuration = 30;
 
@@ -21,6 +22,7 @@ export async function POST(req: NextRequest) {
 
     const chain = isChainKey(chainKey) ? chainKey : DEFAULT_CHAIN_KEY;
 
+    let sameDayReplay = false;
     if (!isOwnerServer(address)) {
       const ok = await verifyPayment({
         txHash: typeof txHash === 'string' ? txHash : '',
@@ -29,7 +31,14 @@ export async function POST(req: NextRequest) {
         usdCents: READING_PRICES_CENTS.tarot,
       }).catch(() => false);
       if (!ok) {
-        return NextResponse.json({ error: 'Payment required' }, { status: 402 });
+        const paidEarlier = await hasPaidToday(
+          address,
+          READING_PRICES_CENTS.tarot,
+        ).catch(() => false);
+        if (!paidEarlier) {
+          return NextResponse.json({ error: 'Payment required' }, { status: 402 });
+        }
+        sameDayReplay = true;
       }
     }
 
@@ -47,7 +56,7 @@ Give a cohesive three-card tarot reading in past/present/future format. Each car
     const raw = await generateReading(prompt, langName);
     const interpretation = raw.replace(new RegExp(address, 'gi'), shortAddr);
 
-    return NextResponse.json({ cards, interpretation });
+    return NextResponse.json({ cards, interpretation, sameDayReplay });
   } catch {
     if (process.env.NODE_ENV !== 'production') {
       console.error('[tarot] handler error');

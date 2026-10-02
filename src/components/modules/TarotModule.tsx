@@ -1,9 +1,10 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useMiniKit } from '@/components/providers/MiniKitProvider';
 import { sendUSDC, isDevMode, isWhitelisted } from '@/lib/payment';
 import { readPaidTxHash, writePaidTxHash, clearPaidTxHash } from '@/lib/paymentStorage';
+import { readCachedReading, writeCachedReading } from '@/lib/readingCache';
 import { READING_PRICES_CENTS, TAROT_IMAGES } from '@/lib/constants';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 import { ReadingCard } from '@/components/ui/ReadingCard';
@@ -26,6 +27,8 @@ export function TarotModule() {
   const [error, setError] = useState<string | null>(null);
   const [flippedCount, setFlippedCount] = useState(0);
   const [paidTxHash, setPaidTxHash] = useState<string | null>(null);
+  const [isReplay, setIsReplay] = useState(false);
+  const prevIdentity = useRef<string>('');
 
   useEffect(() => {
     if (!result) {
@@ -40,12 +43,28 @@ export function TarotModule() {
     return () => timers.forEach(clearTimeout);
   }, [result]);
 
-  // A paid txHash is bound to (wallet, chain); rehydrate from sessionStorage
-  // on mount or identity change so a page refresh never re-charges.
+  // Rehydrate on mount or identity (wallet / chain) change:
+  //   - paid txHash from sessionStorage so a refresh never re-charges mid-flow
+  //   - today's cached result from localStorage so one UTC day = one reading
   useEffect(() => {
-    const stored = readPaidTxHash('tarot', walletAddress, selectedChainKey);
-    setPaidTxHash(stored);
-    // eslint-disable-next-line react-hooks/set-state-in-effect -- hydration-safe: sessionStorage must not be read during SSR
+    const identity = `${walletAddress ?? ''}|${selectedChainKey}`;
+    const identityChanged = prevIdentity.current !== identity;
+    prevIdentity.current = identity;
+
+    setPaidTxHash(readPaidTxHash('tarot', walletAddress, selectedChainKey));
+    const cached = readCachedReading<TarotResult>('tarot', walletAddress);
+    if (cached) {
+      setResult(cached);
+      setIsReplay(true);
+      setState('done');
+      setError(null);
+    } else if (identityChanged) {
+      setResult(null);
+      setIsReplay(false);
+      setError(null);
+      setState('idle');
+    }
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- hydration-safe: storage must not be read during SSR
   }, [walletAddress, selectedChainKey]);
 
   const treasury = process.env.NEXT_PUBLIC_TREASURY_ADDRESS;
@@ -115,7 +134,10 @@ export function TarotModule() {
           // non-JSON response — fall through
         }
         if (res.ok && Array.isArray(data.cards)) {
-          setResult(data as TarotResult);
+          const resultData = data as TarotResult;
+          setResult(resultData);
+          writeCachedReading('tarot', addr, resultData);
+          setIsReplay(Boolean((data as { sameDayReplay?: unknown }).sameDayReplay));
           clearPaidTxHash('tarot', addr, selectedChainKey);
           setPaidTxHash(null);
           setState('done');
@@ -189,6 +211,11 @@ export function TarotModule() {
                 {t.common.ownerFree}
               </span>
             </div>
+          )}
+          {isReplay && (
+            <p className="text-[11px] text-[#a78bfa]/80 text-center bg-[#1a0d2e]/60 border border-[#a78bfa]/20 rounded-lg px-3 py-2">
+              Today&apos;s reading. A new one unlocks after 00:00 UTC.
+            </p>
           )}
           <div className="grid grid-cols-3 gap-2 lg:gap-4">
             {result.cards.map((card, i) => (
