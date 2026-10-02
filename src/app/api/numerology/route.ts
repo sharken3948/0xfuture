@@ -5,12 +5,9 @@ import { LIFE_PATH_MEANINGS } from '@/lib/constants';
 import { GROQ_LANG_NAMES, type LangCode } from '@/lib/translations';
 
 export async function POST(req: NextRequest) {
-  let body: unknown;
   try {
-    body = await req.json();
-    console.log('[numerology] request body:', body);
-
-    const { address, language } = body as Record<string, unknown>;
+    const body = (await req.json()) as Record<string, unknown>;
+    const { address, language } = body;
     const langName = GROQ_LANG_NAMES[(language as LangCode) ?? 'EN'] ?? 'English';
     if (!address || !/^0x[0-9a-fA-F]{40}$/.test(address as string)) {
       return NextResponse.json({ error: 'Invalid address' }, { status: 400 });
@@ -27,9 +24,10 @@ The hex digits of the address sum to this sacred number. Give a personalized num
     const interpretation = raw.replace(new RegExp(address as string, 'gi'), shortAddr);
 
     return NextResponse.json({ digits, lifePathNumber, interpretation });
-  } catch (err) {
-    const message = err instanceof Error ? err.message : String(err);
-    console.error('[numerology] error:', message, err);
-    return NextResponse.json({ error: message }, { status: 500 });
+  } catch {
+    if (process.env.NODE_ENV !== 'production') {
+      console.error('[numerology] handler error');
+    }
+    return NextResponse.json({ error: 'Reading failed' }, { status: 500 });
   }
 }

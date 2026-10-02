@@ -40,12 +40,19 @@ export function NumerologyModule() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ address: addr, language }),
       });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error);
-      setResult(data);
+      let data: { error?: string } & Partial<NumerologyResult> = {};
+      try {
+        data = await res.json();
+      } catch {
+        // non-JSON response (dev error overlay, upstream HTML, etc.)
+      }
+      if (!res.ok || typeof data.lifePathNumber !== 'number') {
+        throw new Error(typeof data.error === 'string' ? data.error : 'Reading failed');
+      }
+      setResult(data as NumerologyResult);
       setState('done');
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Something went wrong');
+      setError(err instanceof Error ? err.message : 'Reading failed');
       setState('error');
     }
   };

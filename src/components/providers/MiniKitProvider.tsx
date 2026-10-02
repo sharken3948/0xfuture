@@ -44,6 +44,16 @@ function chainIdToKey(chainId: number | undefined): ChainKey {
   return 'base';
 }
 
+function chainSwitchError(err: unknown, label: string): Error {
+  const code = (err as { code?: number } | null)?.code;
+  const name = (err as { name?: string } | null)?.name ?? '';
+  const msg = (err as { message?: string } | null)?.message ?? '';
+  if (code === 4001 || /UserRejectedRequest/.test(name) || /reject|denied/i.test(msg)) {
+    return new Error(`Chain switch rejected. Approve the switch to ${label} in your wallet to continue.`);
+  }
+  return new Error(`Could not switch to ${label}. Please switch manually in your wallet.`);
+}
+
 export function MiniKitProvider({ children }: { children: React.ReactNode }) {
   const [isMounted, setIsMounted] = useState(false);
   const [isReady, setIsReady] = useState(false);
@@ -126,18 +136,45 @@ export function MiniKitProvider({ children }: { children: React.ReactNode }) {
 
   const getWalletClient = useCallback(async (): Promise<WalletClient> => {
     if (isFarcasterContext) {
-      return createWalletClient({
-        chain: CHAIN_CONFIGS.base.chain,
+      const baseCfg = CHAIN_CONFIGS.base;
+      const wc = createWalletClient({
+        chain: baseCfg.chain,
         transport: custom(sdk.wallet.ethProvider),
       });
+      const actual = await wc.getChainId().catch(() => undefined);
+      if (actual !== undefined && actual !== baseCfg.chain.id) {
+        try {
+          await wc.switchChain({ id: baseCfg.chain.id });
+        } catch (err) {
+          throw chainSwitchError(err, baseCfg.label);
+        }
+      }
+      return wc;
     }
     const targetChainId = CHAIN_CONFIGS[selectedChainKey].chain.id;
+    const targetLabel = CHAIN_CONFIGS[selectedChainKey].label;
+
     if (currentChainId !== targetChainId) {
-      await switchChainAsync({ chainId: targetChainId });
+      try {
+        await switchChainAsync({ chainId: targetChainId });
+      } catch (err) {
+        throw chainSwitchError(err, targetLabel);
+      }
     }
-    const wc = await getWagmiWalletClient(config, { chainId: targetChainId });
-    if (!wc) throw new Error('Wallet not connected');
-    return wc;
+
+    // switchChainAsync resolves on wallet ack, but the connector's live
+    // eth_chainId can lag by a tick; getConnectorClient then throws
+    // ConnectorChainMismatchError. Poll briefly until the connector catches up.
+    for (let i = 0; i < 20; i++) {
+      try {
+        const wc = await getWagmiWalletClient(config, { chainId: targetChainId });
+        if (wc && wc.chain?.id === targetChainId) return wc;
+      } catch {
+        // chain still propagating — retry
+      }
+      await new Promise((r) => setTimeout(r, 100));
+    }
+    throw new Error(`Wallet did not switch to ${targetLabel} in time. Please try again.`);
   }, [isFarcasterContext, selectedChainKey, currentChainId, switchChainAsync, config]);
 
   const value = useMemo<MiniKitContextValue>(

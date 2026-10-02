@@ -84,11 +84,18 @@ export function TarotModule() {
       const res = await fetch('/api/tarot', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ address: addr, txHash, language }),
+        body: JSON.stringify({ address: addr, txHash, language, chainKey: selectedChainKey }),
       });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error);
-      setResult(data);
+      let data: { error?: string } & Partial<TarotResult> = {};
+      try {
+        data = await res.json();
+      } catch {
+        // non-JSON response — fall through to generic error
+      }
+      if (!res.ok || !Array.isArray(data.cards)) {
+        throw new Error(typeof data.error === 'string' ? data.error : 'Reading failed');
+      }
+      setResult(data as TarotResult);
       setState('done');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Reading failed');

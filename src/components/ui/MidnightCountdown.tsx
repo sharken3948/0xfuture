@@ -4,7 +4,13 @@ import { useState, useEffect } from 'react';
 
 const TOTAL_MINUTES = 24 * 60;
 
-function getCountdown() {
+interface Countdown {
+  hours: number;
+  minutes: number;
+  progress: number;
+}
+
+function getCountdown(): Countdown {
   const now = new Date();
   const midnight = new Date(Date.UTC(
     now.getUTCFullYear(),
@@ -20,15 +26,18 @@ function getCountdown() {
 }
 
 export function MidnightCountdown() {
-  const [state, setState] = useState(getCountdown);
+  const [state, setState] = useState<Countdown | null>(null);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- hydration-safe init: clock must not be read during SSR
+    setState(getCountdown());
     const id = setInterval(() => setState(getCountdown()), 60_000);
     return () => clearInterval(id);
   }, []);
 
-  const glowOpacity = 0.3 + state.progress * 0.7;
-  const glowSpread = 4 + state.progress * 8;
+  const progress = state?.progress ?? 0;
+  const glowOpacity = 0.3 + progress * 0.7;
+  const glowSpread = 4 + progress * 8;
   const moonGlow = `0 0 ${glowSpread}px rgba(196,162,90,${glowOpacity.toFixed(2)})`;
 
   return (
@@ -47,7 +56,7 @@ export function MidnightCountdown() {
           🌙
         </span>
         <span className="text-[11px] lg:text-[15px] font-semibold text-[#c4a25a] leading-none">
-          {state.hours}h {String(state.minutes).padStart(2, '0')}m
+          {state ? `${state.hours}h ${String(state.minutes).padStart(2, '0')}m` : ''}
         </span>
       </div>
     </div>

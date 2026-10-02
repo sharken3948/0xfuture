@@ -74,9 +74,16 @@ export function AstrologyModule() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ address: addr, txHash, language, chainKey: selectedChainKey }),
       });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error);
-      setResult(data);
+      let data: { error?: string } & Partial<AstrologyResult> = {};
+      try {
+        data = await res.json();
+      } catch {
+        // non-JSON response — fall through to generic error
+      }
+      if (!res.ok || typeof data.zodiacSign !== 'string') {
+        throw new Error(typeof data.error === 'string' ? data.error : 'Reading failed');
+      }
+      setResult(data as AstrologyResult);
       setState('done');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Reading failed');

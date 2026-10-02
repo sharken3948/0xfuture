@@ -20,10 +20,15 @@ export const isDevMode =
   process.env.NODE_ENV !== 'production' &&
   (process.env.NEXT_PUBLIC_APP_URL?.includes('localhost') ?? false);
 
-const WHITELIST = new Set(['0xf58dc3d979271325f52349142afec83b4b1c4e3a']);
+const OWNERS: ReadonlySet<string> = new Set(
+  (process.env.NEXT_PUBLIC_OWNER_ADDRESSES ?? '')
+    .split(',')
+    .map((s) => s.trim().toLowerCase())
+    .filter((s) => /^0x[0-9a-f]{40}$/.test(s)),
+);
 
 export function isWhitelisted(address: string): boolean {
-  return WHITELIST.has(address.toLowerCase());
+  return OWNERS.has(address.toLowerCase());
 }
 
 export async function sendUSDC(
@@ -34,12 +39,6 @@ export async function sendUSDC(
 ): Promise<PaymentResult> {
   const cfg = CHAIN_CONFIGS[chainKey];
   const publicClient = createPublicClient({ chain: cfg.chain, transport: http() });
-
-  // Ensure wallet is on the selected chain
-  const currentChainId = await walletClient.getChainId();
-  if (currentChainId !== cfg.chain.id) {
-    await walletClient.switchChain({ id: cfg.chain.id });
-  }
 
   const decimals = await publicClient.readContract({
     address: cfg.usdcAddress,

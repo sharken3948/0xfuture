@@ -12,7 +12,7 @@ export function getGroqClient(): Groq {
 export async function generateReading(prompt: string, language = 'English'): Promise<string> {
   const groq = getGroqClient();
   const completion = await groq.chat.completions.create({
-    model: 'llama-3.3-70b-versatile',
+    model: process.env.GROQ_MODEL ?? 'openai/gpt-oss-120b',
     messages: [
       {
         role: 'system',
@@ -23,6 +23,11 @@ export async function generateReading(prompt: string, language = 'English'): Pro
     ],
     max_tokens: 350,
     temperature: 0.85,
+    reasoning_effort: 'low',
+    reasoning_format: 'hidden',
   });
-  return completion.choices[0]?.message?.content ?? 'The oracle is silent. Try again.';
+  const content = completion.choices[0]?.message?.content;
+  return typeof content === 'string' && content.length > 0
+    ? content
+    : 'The oracle is silent. Try again.';
 }

@@ -1,8 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getFirstTransactionDate, dateToZodiac } from '@/lib/astrology';
 import { generateReading } from '@/lib/groq';
-import { DEFAULT_CHAIN_KEY, ZODIAC_SYMBOLS, isChainKey } from '@/lib/constants';
+import {
+  DEFAULT_CHAIN_KEY,
+  READING_PRICES_CENTS,
+  ZODIAC_SYMBOLS,
+  isChainKey,
+} from '@/lib/constants';
 import { GROQ_LANG_NAMES, type LangCode } from '@/lib/translations';
+import { isOwnerServer, verifyPayment } from '@/lib/verifyPayment';
 
 export async function POST(req: NextRequest) {
   try {
@@ -12,12 +18,19 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Invalid address' }, { status: 400 });
     }
 
-    // txHash is the proof-of-payment hash (verified client-side)
-    if (!txHash) {
-      return NextResponse.json({ error: 'Payment required' }, { status: 402 });
-    }
-
     const chain = isChainKey(chainKey) ? chainKey : DEFAULT_CHAIN_KEY;
+
+    if (!isOwnerServer(address)) {
+      const ok = await verifyPayment({
+        txHash: typeof txHash === 'string' ? txHash : '',
+        address,
+        chainKey: chain,
+        usdCents: READING_PRICES_CENTS.astrology,
+      }).catch(() => false);
+      if (!ok) {
+        return NextResponse.json({ error: 'Payment required' }, { status: 402 });
+      }
+    }
     const firstTxDate = await getFirstTransactionDate(address, chain);
     const zodiacSign = dateToZodiac(firstTxDate);
     const symbol = ZODIAC_SYMBOLS[zodiacSign];
@@ -54,8 +67,10 @@ Give a personalized astrology reading for this onchain soul. Reference their ${z
       symbol,
       interpretation,
     });
-  } catch (err) {
-    console.error('[astrology]', err);
+  } catch {
+    if (process.env.NODE_ENV !== 'production') {
+      console.error('[astrology] handler error');
+    }
     return NextResponse.json({ error: 'Reading failed' }, { status: 500 });
   }
 }
