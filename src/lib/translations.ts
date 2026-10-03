@@ -23,6 +23,20 @@ export const LANGUAGES: Language[] = [
   { code: 'YO', name: 'Yoruba',    countryCode: 'ng' },
 ];
 
+export const BCP47_LOCALE: Record<LangCode, string> = {
+  EN: 'en-US',
+  TR: 'tr-TR',
+  ES: 'es-ES',
+  PT: 'pt-BR',
+  FR: 'fr-FR',
+  DE: 'de-DE',
+  RU: 'ru-RU',
+  ZH: 'zh-CN',
+  HI: 'hi-IN',
+  UR: 'ur-PK',
+  YO: 'yo-NG',
+};
+
 export const GROQ_LANG_NAMES: Record<LangCode, string> = {
   EN: 'English',
   TR: 'Turkish',
@@ -55,6 +69,12 @@ export interface T {
     reversed: string;
     devMode: string;
     ownerFree: string;
+    heroTagline: string;
+    treasuryNotConfigured: string;
+    paymentFailed: string;
+    readingFailed: string;
+    retryFailedMsg: string;
+    todaysReadingNotice: string;
   };
   numerology: {
     description: string;
@@ -79,6 +99,7 @@ export interface T {
     birthSign: string;
     zodiacSigns: Record<string, string>;
     shareText: (sign: string, chainKey: ChainKey) => string;
+    derivedDateNotice: string;
   };
   tarot: {
     description: string;
@@ -107,6 +128,12 @@ export const TRANSLATIONS: Record<LangCode, T> = {
       reversed: '↑ Reversed',
       devMode: 'DEV MODE, Payment Simulated',
       ownerFree: 'OWNER, Free Reading',
+      heroTagline: 'Every wallet writes a story. Decode yours onchain.',
+      treasuryNotConfigured: 'Treasury address not configured.',
+      paymentFailed: 'Payment failed',
+      readingFailed: 'Reading failed',
+      retryFailedMsg: 'Payment received, but the reading failed. Please try again, you will not be charged twice.',
+      todaysReadingNotice: 'Today\'s reading. A new one unlocks after 00:00 UTC.',
     },
     numerology: {
       description: 'Every wallet holds a destiny hidden in numbers. Decode the secret and begin to illuminate your path...',
@@ -131,6 +158,7 @@ export const TRANSLATIONS: Record<LangCode, T> = {
       birthSign: 'Onchain Birth Sign',
       zodiacSigns: { Aries: 'Aries', Taurus: 'Taurus', Gemini: 'Gemini', Cancer: 'Cancer', Leo: 'Leo', Virgo: 'Virgo', Libra: 'Libra', Scorpio: 'Scorpio', Sagittarius: 'Sagittarius', Capricorn: 'Capricorn', Aquarius: 'Aquarius', Pisces: 'Pisces' },
       shareText: (sign, chainKey) => `My onchain birth sign is ${sign} ✦ Discover yours #0xFUTURE ${CHAIN_HASHTAG[chainKey]}`,
+      derivedDateNotice: 'No onchain history found for this wallet, so this reading uses a derived date.',
     },
     tarot: {
       description: 'Your wallet and today\'s energy choose your cards. A new reading awaits at midnight...',
@@ -157,6 +185,12 @@ export const TRANSLATIONS: Record<LangCode, T> = {
       reversed: '↑ Tersine',
       devMode: 'GELİŞTİRİCİ MODU, Ödeme Simüle Edildi',
       ownerFree: 'SAHİP, Ücretsiz Okuma',
+      heroTagline: 'Her cüzdan bir hikâye yazar. Seninkini zincir üzerinde çöz.',
+      treasuryNotConfigured: 'Hazine adresi yapılandırılmamış.',
+      paymentFailed: 'Ödeme başarısız',
+      readingFailed: 'Okuma başarısız',
+      retryFailedMsg: 'Ödeme alındı, ancak okuma başarısız oldu. Lütfen tekrar deneyin, iki kez ücretlendirilmeyeceksiniz.',
+      todaysReadingNotice: 'Bugünün okuması. Yenisi 00:00 UTC\'den sonra açılır.',
     },
     numerology: {
       description: 'Her cüzdan sayılarda gizli bir kader taşır. Sırrı çöz ve yolunu aydınlatmaya başla...',
@@ -181,6 +215,7 @@ export const TRANSLATIONS: Record<LangCode, T> = {
       birthSign: 'Onchain Doğum Burcu',
       zodiacSigns: { Aries: 'Koç', Taurus: 'Boğa', Gemini: 'İkizler', Cancer: 'Yengeç', Leo: 'Aslan', Virgo: 'Başak', Libra: 'Terazi', Scorpio: 'Akrep', Sagittarius: 'Yay', Capricorn: 'Oğlak', Aquarius: 'Kova', Pisces: 'Balık' },
       shareText: (sign, chainKey) => `Onchain doğum burcum ${sign} ✦ Seninkini keşfet #0xFUTURE ${CHAIN_HASHTAG[chainKey]}`,
+      derivedDateNotice: 'Bu cüzdan için zincir üzerinde geçmiş bulunamadı, bu nedenle bu okuma türetilmiş bir tarih kullanıyor.',
     },
     tarot: {
       description: 'Cüzdanınız ve bugünün enerjisi kartlarınızı seçer. Gece yarısında yeni bir okuma sizi bekliyor...',
@@ -207,6 +242,12 @@ export const TRANSLATIONS: Record<LangCode, T> = {
       reversed: '↑ Invertida',
       devMode: 'MODO DEV, Pago Simulado',
       ownerFree: 'PROPIETARIO, Lectura Gratis',
+      heroTagline: 'Cada billetera escribe una historia. Descifra la tuya onchain.',
+      treasuryNotConfigured: 'Dirección de tesorería no configurada.',
+      paymentFailed: 'Pago fallido',
+      readingFailed: 'Lectura fallida',
+      retryFailedMsg: 'Pago recibido, pero la lectura falló. Vuelve a intentarlo, no se te cobrará dos veces.',
+      todaysReadingNotice: 'Lectura de hoy. Una nueva se desbloquea después de las 00:00 UTC.',
     },
     numerology: {
       description: 'Cada billetera esconde un destino en los números. Descifra el secreto e ilumina tu camino...',
@@ -231,6 +272,7 @@ export const TRANSLATIONS: Record<LangCode, T> = {
       birthSign: 'Signo de Nacimiento Onchain',
       zodiacSigns: { Aries: 'Aries', Taurus: 'Tauro', Gemini: 'Géminis', Cancer: 'Cáncer', Leo: 'Leo', Virgo: 'Virgo', Libra: 'Libra', Scorpio: 'Escorpio', Sagittarius: 'Sagitario', Capricorn: 'Capricornio', Aquarius: 'Acuario', Pisces: 'Piscis' },
       shareText: (sign, chainKey) => `Mi signo de nacimiento onchain es ${sign} ✦ Descubre el tuyo #0xFUTURE ${CHAIN_HASHTAG[chainKey]}`,
+      derivedDateNotice: 'No se encontró historial onchain para esta billetera, por lo que esta lectura usa una fecha derivada.',
     },
     tarot: {
       description: 'Tu billetera y la energía de hoy eligen tus cartas. Una nueva lectura te espera a medianoche...',
@@ -257,6 +299,12 @@ export const TRANSLATIONS: Record<LangCode, T> = {
       reversed: '↑ Invertida',
       devMode: 'MODO DEV, Pagamento Simulado',
       ownerFree: 'PROPRIETÁRIO, Leitura Grátis',
+      heroTagline: 'Cada carteira escreve uma história. Desvende a sua onchain.',
+      treasuryNotConfigured: 'Endereço do tesouro não configurado.',
+      paymentFailed: 'Pagamento falhou',
+      readingFailed: 'Leitura falhou',
+      retryFailedMsg: 'Pagamento recebido, mas a leitura falhou. Tente novamente, você não será cobrado duas vezes.',
+      todaysReadingNotice: 'Leitura de hoje. Uma nova é liberada após 00:00 UTC.',
     },
     numerology: {
       description: 'Toda carteira guarda um destino oculto nos números. Desvende o segredo e ilumine seu caminho...',
@@ -281,6 +329,7 @@ export const TRANSLATIONS: Record<LangCode, T> = {
       birthSign: 'Signo de Nascimento Onchain',
       zodiacSigns: { Aries: 'Áries', Taurus: 'Touro', Gemini: 'Gêmeos', Cancer: 'Câncer', Leo: 'Leão', Virgo: 'Virgem', Libra: 'Libra', Scorpio: 'Escorpião', Sagittarius: 'Sagitário', Capricorn: 'Capricórnio', Aquarius: 'Aquário', Pisces: 'Peixes' },
       shareText: (sign, chainKey) => `Meu signo de nascimento onchain é ${sign} ✦ Descubra o seu #0xFUTURE ${CHAIN_HASHTAG[chainKey]}`,
+      derivedDateNotice: 'Nenhum histórico onchain encontrado para esta carteira, então esta leitura usa uma data derivada.',
     },
     tarot: {
       description: 'Sua carteira e a energia de hoje escolhem suas cartas. Uma nova leitura aguarda à meia-noite...',
@@ -307,6 +356,12 @@ export const TRANSLATIONS: Record<LangCode, T> = {
       reversed: '↑ Inversée',
       devMode: 'MODE DEV, Paiement Simulé',
       ownerFree: 'PROPRIÉTAIRE, Lecture Gratuite',
+      heroTagline: 'Chaque portefeuille écrit une histoire. Déchiffre la tienne onchain.',
+      treasuryNotConfigured: 'Adresse de trésorerie non configurée.',
+      paymentFailed: 'Paiement échoué',
+      readingFailed: 'Lecture échouée',
+      retryFailedMsg: 'Paiement reçu, mais la lecture a échoué. Veuillez réessayer, vous ne serez pas facturé deux fois.',
+      todaysReadingNotice: 'Lecture du jour. Une nouvelle se débloque après 00h00 UTC.',
     },
     numerology: {
       description: 'Chaque portefeuille cache un destin dans les chiffres. Déchiffre le secret et éclaire ton chemin...',
@@ -331,6 +386,7 @@ export const TRANSLATIONS: Record<LangCode, T> = {
       birthSign: 'Signe de Naissance Onchain',
       zodiacSigns: { Aries: 'Bélier', Taurus: 'Taureau', Gemini: 'Gémeaux', Cancer: 'Cancer', Leo: 'Lion', Virgo: 'Vierge', Libra: 'Balance', Scorpio: 'Scorpion', Sagittarius: 'Sagittaire', Capricorn: 'Capricorne', Aquarius: 'Verseau', Pisces: 'Poissons' },
       shareText: (sign, chainKey) => `Mon signe de naissance onchain est ${sign} ✦ Découvrez le vôtre #0xFUTURE ${CHAIN_HASHTAG[chainKey]}`,
+      derivedDateNotice: 'Aucun historique onchain trouvé pour ce portefeuille, cette lecture utilise donc une date dérivée.',
     },
     tarot: {
       description: "Votre portefeuille et l'énergie d'aujourd'hui choisissent vos cartes. Une nouvelle lecture vous attend à minuit...",
@@ -357,6 +413,12 @@ export const TRANSLATIONS: Record<LangCode, T> = {
       reversed: '↑ Umgekehrt',
       devMode: 'DEV MODUS, Zahlung Simuliert',
       ownerFree: 'INHABER, Kostenlose Lesung',
+      heroTagline: 'Jede Wallet schreibt eine Geschichte. Entschlüssle deine onchain.',
+      treasuryNotConfigured: 'Treasury-Adresse nicht konfiguriert.',
+      paymentFailed: 'Zahlung fehlgeschlagen',
+      readingFailed: 'Lesung fehlgeschlagen',
+      retryFailedMsg: 'Zahlung erhalten, aber die Lesung ist fehlgeschlagen. Bitte erneut versuchen, dir wird nichts doppelt berechnet.',
+      todaysReadingNotice: 'Heutige Lesung. Eine neue schaltet nach 00:00 UTC frei.',
     },
     numerology: {
       description: 'Jede Wallet birgt ein Schicksal in Zahlen. Entschlüssle das Geheimnis und erleuchte deinen Weg...',
@@ -381,6 +443,7 @@ export const TRANSLATIONS: Record<LangCode, T> = {
       birthSign: 'Onchain-Geburtszeichen',
       zodiacSigns: { Aries: 'Widder', Taurus: 'Stier', Gemini: 'Zwillinge', Cancer: 'Krebs', Leo: 'Löwe', Virgo: 'Jungfrau', Libra: 'Waage', Scorpio: 'Skorpion', Sagittarius: 'Schütze', Capricorn: 'Steinbock', Aquarius: 'Wassermann', Pisces: 'Fische' },
       shareText: (sign, chainKey) => `Mein Onchain-Geburtszeichen ist ${sign} ✦ Entdecke deines #0xFUTURE ${CHAIN_HASHTAG[chainKey]}`,
+      derivedDateNotice: 'Keine Onchain-Historie für diese Wallet gefunden, daher verwendet diese Lesung ein abgeleitetes Datum.',
     },
     tarot: {
       description: 'Deine Wallet und die Energie des Tages wählen deine Karten. Eine neue Lesung wartet um Mitternacht...',
@@ -407,6 +470,12 @@ export const TRANSLATIONS: Record<LangCode, T> = {
       reversed: '↑ Перевёрнутая',
       devMode: 'РЕЖ. РАЗРАБОТКИ, Оплата Симулирована',
       ownerFree: 'ВЛАДЕЛЕЦ, Бесплатное Чтение',
+      heroTagline: 'Каждый кошелёк пишет свою историю. Расшифруй её ончейн.',
+      treasuryNotConfigured: 'Адрес казначейства не настроен.',
+      paymentFailed: 'Платёж не прошёл',
+      readingFailed: 'Чтение не удалось',
+      retryFailedMsg: 'Платёж получен, но чтение не удалось. Попробуйте снова — повторно средства не спишутся.',
+      todaysReadingNotice: 'Сегодняшнее чтение. Новое откроется после 00:00 UTC.',
     },
     numerology: {
       description: 'В каждом кошельке скрыта судьба зашифрованная в числах. Раскрой секрет и освети свой путь...',
@@ -431,6 +500,7 @@ export const TRANSLATIONS: Record<LangCode, T> = {
       birthSign: 'Ончейн Знак Рождения',
       zodiacSigns: { Aries: 'Овен', Taurus: 'Телец', Gemini: 'Близнецы', Cancer: 'Рак', Leo: 'Лев', Virgo: 'Дева', Libra: 'Весы', Scorpio: 'Скорпион', Sagittarius: 'Стрелец', Capricorn: 'Козерог', Aquarius: 'Водолей', Pisces: 'Рыбы' },
       shareText: (sign, chainKey) => `Мой ончейн знак рождения ${sign} ✦ Узнайте свой #0xFUTURE ${CHAIN_HASHTAG[chainKey]}`,
+      derivedDateNotice: 'Для этого кошелька не найдено ончейн-истории, поэтому в этом чтении используется расчётная дата.',
     },
     tarot: {
       description: 'Ваш кошелёк и энергия сегодняшнего дня выбирают ваши карты. Новое чтение ждёт вас в полночь...',
@@ -457,6 +527,12 @@ export const TRANSLATIONS: Record<LangCode, T> = {
       reversed: '↑ 逆位',
       devMode: '开发模式, 付款已模拟',
       ownerFree: '所有者, 免费解读',
+      heroTagline: '每个钱包都在书写一段故事。在链上解读你的那段。',
+      treasuryNotConfigured: '金库地址未配置。',
+      paymentFailed: '支付失败',
+      readingFailed: '解读失败',
+      retryFailedMsg: '已收到付款，但解读失败。请重试，不会重复扣款。',
+      todaysReadingNotice: '今日解读。新解读在 UTC 00:00 之后开启。',
     },
     numerology: {
       description: '每个钱包都藏着数字中隐秘的命运。解读秘密开始照亮你的道路...',
@@ -481,6 +557,7 @@ export const TRANSLATIONS: Record<LangCode, T> = {
       birthSign: '链上出生星座',
       zodiacSigns: { Aries: '白羊座', Taurus: '金牛座', Gemini: '双子座', Cancer: '巨蟹座', Leo: '狮子座', Virgo: '处女座', Libra: '天秤座', Scorpio: '天蝎座', Sagittarius: '射手座', Capricorn: '摩羯座', Aquarius: '水瓶座', Pisces: '双鱼座' },
       shareText: (sign, chainKey) => `我的链上出生星座是 ${sign} ✦ 发现你的 #0xFUTURE ${CHAIN_HASHTAG[chainKey]}`,
+      derivedDateNotice: '未找到该钱包的链上历史，因此本次解读使用推算日期。',
     },
     tarot: {
       description: '您的钱包和今日能量为您选牌。每天午夜等待新的解读...',
@@ -507,6 +584,12 @@ export const TRANSLATIONS: Record<LangCode, T> = {
       reversed: '↑ उल्टा',
       devMode: 'डेव मोड, भुगतान सिमुलेटेड',
       ownerFree: 'मालिक, मुफ्त पाठ',
+      heroTagline: 'हर वॉलेट एक कहानी लिखता है। अपनी कहानी ऑनचेन सुलझाओ।',
+      treasuryNotConfigured: 'ट्रेज़री पता कॉन्फ़िगर नहीं है।',
+      paymentFailed: 'भुगतान विफल',
+      readingFailed: 'पाठ विफल',
+      retryFailedMsg: 'भुगतान मिल गया, लेकिन पाठ विफल रहा। कृपया पुनः प्रयास करें, आपसे दो बार शुल्क नहीं लिया जाएगा।',
+      todaysReadingNotice: 'आज का पाठ। नया पाठ 00:00 UTC के बाद खुलेगा।',
     },
     numerology: {
       description: 'हर वॉलेट में संख्याओं में छिपी एक नियति है। रहस्य को सुलझाओ और अपना मार्ग प्रशस्त करो...',
@@ -531,6 +614,7 @@ export const TRANSLATIONS: Record<LangCode, T> = {
       birthSign: 'ऑनचेन जन्म राशि',
       zodiacSigns: { Aries: 'मेष', Taurus: 'वृषभ', Gemini: 'मिथुन', Cancer: 'कर्क', Leo: 'सिंह', Virgo: 'कन्या', Libra: 'तुला', Scorpio: 'वृश्चिक', Sagittarius: 'धनु', Capricorn: 'मकर', Aquarius: 'कुम्भ', Pisces: 'मीन' },
       shareText: (sign, chainKey) => `मेरी ऑनचेन जन्म राशि ${sign} है ✦ अपनी खोजें #0xFUTURE ${CHAIN_HASHTAG[chainKey]}`,
+      derivedDateNotice: 'इस वॉलेट के लिए कोई ऑनचेन इतिहास नहीं मिला, इसलिए यह पाठ अनुमानित तिथि का उपयोग करता है।',
     },
     tarot: {
       description: 'आपका वॉलेट और आज की ऊर्जा आपके पत्ते चुनती है। आधी रात को एक नया पाठ इंतजार करता है...',
@@ -557,6 +641,12 @@ export const TRANSLATIONS: Record<LangCode, T> = {
       reversed: '↑ الٹا',
       devMode: 'ڈیو موڈ, ادائیگی سمولیٹڈ',
       ownerFree: 'مالک, مفت قرأت',
+      heroTagline: 'ہر والیٹ ایک کہانی لکھتا ہے۔ اپنی کہانی آن چین سمجھو۔',
+      treasuryNotConfigured: 'ٹریژری ایڈریس کنفیگر نہیں ہے۔',
+      paymentFailed: 'ادائیگی ناکام',
+      readingFailed: 'قرأت ناکام',
+      retryFailedMsg: 'ادائیگی موصول ہوئی، لیکن قرأت ناکام رہی۔ براہ کرم دوبارہ کوشش کریں، آپ سے دو بار رقم نہیں لی جائے گی۔',
+      todaysReadingNotice: 'آج کی قرأت۔ نئی قرأت 00:00 UTC کے بعد کھلے گی۔',
     },
     numerology: {
       description: 'ہر والیٹ میں اعداد میں پوشیدہ ایک مقدر ہے۔ راز کو سمجھو اور اپنا راستہ روشن کرو...',
@@ -581,6 +671,7 @@ export const TRANSLATIONS: Record<LangCode, T> = {
       birthSign: 'آن چین پیدائشی نشان',
       zodiacSigns: { Aries: 'حمل', Taurus: 'ثور', Gemini: 'جوزا', Cancer: 'سرطان', Leo: 'اسد', Virgo: 'سنبلہ', Libra: 'میزان', Scorpio: 'عقرب', Sagittarius: 'قوس', Capricorn: 'جدی', Aquarius: 'دلو', Pisces: 'حوت' },
       shareText: (sign, chainKey) => `میری آن چین پیدائشی علامت ${sign} ہے ✦ اپنی دریافت کریں #0xFUTURE ${CHAIN_HASHTAG[chainKey]}`,
+      derivedDateNotice: 'اس والیٹ کے لیے کوئی آن چین تاریخ نہیں ملی، اس لیے یہ قرأت ایک تخمینی تاریخ استعمال کرتی ہے۔',
     },
     tarot: {
       description: 'آپ کا والیٹ اور آج کی توانائی آپ کے پتے منتخب کرتی ہے۔ آدھی رات کو ایک نئی قرأت منتظر ہے...',
@@ -607,6 +698,12 @@ export const TRANSLATIONS: Record<LangCode, T> = {
       reversed: '↑ Yípadà',
       devMode: 'ÌPELE DEV, Ìsanwó Ṣiṣeṣe',
       ownerFree: 'ONÍGBẸ̀SẸ̀, Kíkà Ọfẹ',
+      heroTagline: 'Wọ́lẹ́ọ̀tì kọ̀ọ̀kan ń kọ ìtàn kan. Tú ti ìwọ lórí ẹ̀wọ̀n.',
+      treasuryNotConfigured: 'Àdírẹ́sì ìṣúra kò tíì ṣètò.',
+      paymentFailed: 'Ìsanwó kùnà',
+      readingFailed: 'Kíkà kùnà',
+      retryFailedMsg: 'A ti gba ìsanwó, ṣùgbọ́n kíkà kùnà. Jọ̀wọ́ gbìyànjú lẹ́ẹ̀kan sí i, a kì yóò gbà owó rẹ lẹ́ẹ̀mejì.',
+      todaysReadingNotice: 'Kíkà òní. Tuntun yóò ṣí lẹ́yìn 00:00 UTC.',
     },
     numerology: {
       description: 'Wọ́lẹ́ọ̀tì kọ̀ọ̀kan ni ayanmọ́ tí ó farapamọ́ nínú àwọn nọ́mbà. Ṣàwárí ìkọ̀kọ̀ náà kí o sì tàn imọ́lẹ̀ sí ọ̀nà rẹ...',
@@ -631,6 +728,7 @@ export const TRANSLATIONS: Record<LangCode, T> = {
       birthSign: 'Àmì Ìbí Onchain',
       zodiacSigns: { Aries: 'Àgùntàn', Taurus: 'Màlúù', Gemini: 'Ìbejì', Cancer: 'Àkàn', Leo: 'Kìnnìún', Virgo: 'Wúnndíá', Libra: 'Ìwọ̀n', Scorpio: 'Àkékè', Sagittarius: 'Ọlọ́dẹ', Capricorn: 'Ewúrẹ́', Aquarius: 'Olùgbébomi', Pisces: 'Ẹja' },
       shareText: (sign, chainKey) => `Àmì ìbí onchain mi jẹ́ ${sign} ✦ Ṣàwárí tirẹ #0xFUTURE ${CHAIN_HASHTAG[chainKey]}`,
+      derivedDateNotice: 'A kò rí ìtàn lórí ẹ̀wọ̀n fún wọ́lẹ́ọ̀tì yìí, nítorí náà kíkà yìí ń lo ọjọ́ tí a ṣírò.',
     },
     tarot: {
       description: 'Wọ́lẹ́ọ̀tì rẹ àti agbára òní yan káàdì rẹ. Kíkà tuntun ndúró de rẹ ní aago àárọ̀...',

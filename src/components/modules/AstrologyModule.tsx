@@ -11,6 +11,7 @@ import { ReadingCard } from '@/components/ui/ReadingCard';
 import { ExpandableInfo } from '@/components/ui/ExpandableInfo';
 import { ShareButton } from '@/components/ui/ShareButton';
 import { useTranslations, useLanguage } from '@/lib/language-context';
+import { BCP47_LOCALE } from '@/lib/translations';
 import type { ReadingState } from '@/types';
 
 interface AstrologyResult {
@@ -65,7 +66,7 @@ export function AstrologyModule() {
     }
     if (!addr) return;
     if (!treasury) {
-      setError('Treasury address not configured.');
+      setError(t.common.treasuryNotConfigured);
       return;
     }
 
@@ -92,7 +93,7 @@ export function AstrologyModule() {
           txHash = payment.txHash;
           writePaidTxHash('astrology', addr, selectedChainKey, txHash);
         } catch (err) {
-          setError(err instanceof Error ? err.message : 'Payment failed');
+          setError(err instanceof Error ? err.message : t.common.paymentFailed);
           setState('error');
           return;
         }
@@ -109,8 +110,7 @@ export function AstrologyModule() {
         body: JSON.stringify({ address: addr, txHash, language, chainKey: selectedChainKey }),
       });
 
-    const RETRY_FAILED_MSG =
-      'Payment received, but the reading failed. Please try again, you will not be charged twice.';
+    const RETRY_FAILED_MSG = t.common.retryFailedMsg;
 
     try {
       let data: { error?: string } & Partial<AstrologyResult> = {};
@@ -203,10 +203,10 @@ export function AstrologyModule() {
           )}
           {isReplay && (
             <p className="text-[11px] text-[#a78bfa]/80 text-center bg-[#1a0d2e]/60 border border-[#a78bfa]/20 rounded-lg px-3 py-2">
-              Today&apos;s reading. A new one unlocks after 00:00 UTC.
+              {t.common.todaysReadingNotice}
             </p>
           )}
-          <ReadingCard title={t.astrology.resultTitle} subtitle={`${t.astrology.firstTx} ${new Date(result.firstTxDate).toLocaleDateString()}`}>
+          <ReadingCard title={t.astrology.resultTitle} subtitle={`${t.astrology.firstTx} ${new Date(result.firstTxDate).toLocaleDateString(BCP47_LOCALE[language], { year: 'numeric', month: 'long', day: 'numeric' })}`}>
             <div className="flex items-center gap-4">
               <div className="w-16 h-16 rounded-full bg-[#0e0620] border border-[#c4a25a]/50 flex items-center justify-center text-3xl shadow-lg shadow-[#c4a25a]/15">
                 {result.symbol}
@@ -225,7 +225,7 @@ export function AstrologyModule() {
           </ReadingCard>
           {result.dateSource === 'derived' && (
             <p className="text-[11px] text-[#a78bfa]/70 text-center bg-[#1a0d2e]/60 border border-[#a78bfa]/15 rounded-lg px-3 py-2">
-              No onchain history found for this wallet, so this reading uses a derived date.
+              {t.astrology.derivedDateNotice}
             </p>
           )}
 

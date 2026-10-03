@@ -76,7 +76,7 @@ export function TarotModule() {
     }
     if (!addr) return;
     if (!treasury) {
-      setError('Treasury address not configured.');
+      setError(t.common.treasuryNotConfigured);
       return;
     }
 
@@ -103,7 +103,7 @@ export function TarotModule() {
           txHash = payment.txHash;
           writePaidTxHash('tarot', addr, selectedChainKey, txHash);
         } catch (err) {
-          setError(err instanceof Error ? err.message : 'Payment failed');
+          setError(err instanceof Error ? err.message : t.common.paymentFailed);
           setState('error');
           return;
         }
@@ -120,8 +120,7 @@ export function TarotModule() {
         body: JSON.stringify({ address: addr, txHash, language, chainKey: selectedChainKey }),
       });
 
-    const RETRY_FAILED_MSG =
-      'Payment received, but the reading failed. Please try again, you will not be charged twice.';
+    const RETRY_FAILED_MSG = t.common.retryFailedMsg;
 
     try {
       let data: { error?: string } & Partial<TarotResult> = {};
@@ -214,7 +213,7 @@ export function TarotModule() {
           )}
           {isReplay && (
             <p className="text-[11px] text-[#a78bfa]/80 text-center bg-[#1a0d2e]/60 border border-[#a78bfa]/20 rounded-lg px-3 py-2">
-              Today&apos;s reading. A new one unlocks after 00:00 UTC.
+              {t.common.todaysReadingNotice}
             </p>
           )}
           <div className="grid grid-cols-3 gap-2 lg:gap-4">

@@ -47,12 +47,12 @@ export function NumerologyModule() {
         // non-JSON response (dev error overlay, upstream HTML, etc.)
       }
       if (!res.ok || typeof data.lifePathNumber !== 'number') {
-        throw new Error(typeof data.error === 'string' ? data.error : 'Reading failed');
+        throw new Error(typeof data.error === 'string' ? data.error : t.common.readingFailed);
       }
       setResult(data as NumerologyResult);
       setState('done');
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Reading failed');
+      setError(err instanceof Error ? err.message : t.common.readingFailed);
       setState('error');
     }
   };

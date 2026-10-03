@@ -49,6 +49,14 @@ export default function Home() {
         )}
       </div>
 
+      {/* Hero tagline */}
+      <p
+        className="text-center italic tracking-wide text-[#a78bfa]/85 text-sm leading-snug mb-4 px-2 lg:text-lg lg:leading-relaxed lg:mb-7 lg:px-10"
+        style={{ fontFamily: 'Georgia, serif' }}
+      >
+        {t.common.heroTagline}
+      </p>
+
       {/* Tab navigation */}
       <TabBar active={activeModule} onChange={setActiveModule} />
 
